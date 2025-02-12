@@ -1,0 +1,1 @@
+<!-- Složka slouží k přidávání obrázků !!! -->

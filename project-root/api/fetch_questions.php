@@ -1,0 +1,1 @@
+<!-- Načítání otázek z databáze -->
