@@ -12,6 +12,33 @@ function initMap() {
 
 
 }
+let map; // Definuj mapu globálně
+
+function initMap() {
+    console.log("Inicializace mapy...");
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 50.0903, lng: 14.4000 },
+        zoom: 14
+    });
+
+    console.log("Mapa byla vytvořena:", map);
+    fetchQuestionsAndAddMarkers(); // Načtení otázek a přidání markerů
+}
+
+function addMarker(lat, lng, questionText) {
+    if (!map) {
+        console.error("Chyba: Mapa není inicializovaná!");
+        return;
+    }
+
+    const marker = new google.maps.Marker({
+        position: { lat: lat, lng: lng },
+        map: map,
+        title: questionText
+    });
+
+    console.log("Marker přidán:", marker);
+}
 
 fetch('api/submit_answer.php', {
     method: 'POST',
