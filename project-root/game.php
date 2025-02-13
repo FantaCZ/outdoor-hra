@@ -3,9 +3,8 @@
 
 <head>
     <title>Úniková hra</title>
-    <!-- Načítání Google Maps API s atributem async a defer pro správné načítání -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap"></script>
-
+<!--     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
+ -->
 
  
     <script src="/outdoor-hra/project-root/js/logika_hry.js"></script>
@@ -24,8 +23,19 @@
 
 </head>
 <body>
-<link rel="stylesheet" href="/outdoor-hra/project-root/css/style.css">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
 
+<link rel="stylesheet" href="/outdoor-hra/project-root/css/style.css">
+<nav class="index-nav">
+        <ul>
+            <li><a href="index.php" class="nav-link">Domů</a></li>
+            <li><a href="game.php" class="nav-link">Hrát</a></li>
+            <li><a href="login.php" class="nav-link">Přihlášení</a></li>
+            <li><a href="register.php" class="nav-link">Registrace</a></li>
+            <li><a href="rules.php" class="nav-link">Pravidla</a></li>
+            <li><a href="about.php" class="nav-link">O nás</a></li>
+        </ul>
+    </nav>
 
     <h1>Úniková hra</h1>
 
@@ -52,11 +62,12 @@
     </script>
 
     <div id="map" style="width: 100%; height: 500px;"></div>
-    <div id="questionBox" style="display: none;">
+    <div id="questionBox" style="display: yes;">
         <p id="questionText"></p>
         <input type="text" id="answerInput">
         <button onclick="submitAnswer()">Odpovědět</button>
     </div>
+    
 
 
 </body>
