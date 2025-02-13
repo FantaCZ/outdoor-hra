@@ -1,12 +1,146 @@
-/* Default map styling for larger screens */
-#map {
-    width: 100%;
-    height: 400px;
+/* Resetování některých základních stylů */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Mobile view adjustments */
-@media (max-width: 200px) {
-    #map {
-        height: 100px;  /* Smaller map size for mobile */
+/* Základní styl pro celé tělo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Výška obrazovky */
+    flex-direction: column; /* Svislé zarovnání */
+
+}
+
+/* Styl pro hlavičku */
+h2.register-heading {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Styl pro formulář registrace */
+form.register-form {
+    background-color: white;
+    max-width: 400px;
+    width: 100%; /* Nastavení na 100% pro flexibilitu */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styl pro jednotlivé vstupy (input) v registraci */
+input#register-username,
+input#register-password,
+input#register-confirm-password {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+/* Styl pro tlačítko submit v registraci */
+input#register-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Při najetí myší na tlačítko */
+input#register-submit:hover {
+    background-color: #45a049;
+}
+
+/* Styly pro hlavní stránku s třídou index-page */
+.index-page {
+    font-family: Arial, sans-serif;
+}
+
+/* menu info */
+.index-nav {
+    background-color: #333;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Přidání stínu pro lepší hloubku */
+    border-radius: 8px; /* Zaoblení rohů */
+}
+
+.index-nav ul {
+    list-style-type: none;
+}
+
+.index-nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.index-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease;
+}
+
+.index-nav ul li a:hover {
+    background-color: #4CAF50;
+    border-radius: 5px;
+}
+
+/* Styl pro hlavní obsah stránky */
+.index-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.index-content h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.index-content p a {
+    color: #4CAF50;
+    text-decoration: underline;
+}
+
+.index-content p a:hover {
+    color: #45a049;
+}
+
+/* Styl pro responsivitu (přizpůsobení mobilním zařízením) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+        background-size: contain; /* Na mobilních zařízeních obrázek se přizpůsobí */
+    }
+
+    form.register-form {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    input#register-username,
+    input#register-password,
+    input#register-confirm-password,
+    input#register-submit {
+        font-size: 1em;
     }
 }
+
+
