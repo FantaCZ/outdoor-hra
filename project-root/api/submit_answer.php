@@ -41,7 +41,7 @@ if (!$stmt->execute()) {
     die(json_encode(['error' => 'Execute failed: ' . $stmt->error]));  // Vracení chyby ve formátu JSON
 }
 
-$stmt->bind_result($correct_answer);
+/* $stmt->bind_result($correct_answer);
 if ($stmt->fetch()) {
     // Porovnání odpovědi
     if (strtolower($correct_answer) === $answer) {
@@ -52,6 +52,6 @@ if ($stmt->fetch()) {
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No answer found for question_id = ' . $question_id]);
 }
-
+ */
 $stmt->close();
 ?>

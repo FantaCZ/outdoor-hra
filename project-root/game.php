@@ -11,42 +11,93 @@
 
     
     <script>
-    function initMap() {
-        console.log("Mapa byla zavolána.");
-        const map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 50.0903, lng: 14.4000 },
-            zoom: 14
-        });
-        console.log("Mapa byla vytvořena.");
-    }
+        let map;
+        let playerMarker;
+        let inactivityTimeout; // Proměnná pro sledování nečinnosti
+        const inactivityDuration = 15000; // 15 sekund nečinnosti před resetováním mapy
+        let lastKnownPosition = { lat: 50.0903, lng: 14.4000 }; // Výchozí pozice hráče
 
-                // Načíst otázky z API nebo souboru
-                fetch('api/fetch_questions.php') // Tento endpoint by měl vracet JSON s otázkami a souřadnicemi
-                .then(response => response.json())
-                .then(data => {
-                    // Pro každou otázku přidáme marker na mapu
-                    data.forEach(question => {
-                        // Ujistěte se, že každá otázka má lat a lng
-                        if (question.lat && question.lng) {
-                            const marker = new google.maps.Marker({
-                                position: { lat: question.lat, lng: question.lng },
+        // Funkce pro inicializaci mapy
+        function initMap() {
+            console.log("Inicializace mapy...");
+
+            // Výchozí nastavení mapy
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: lastKnownPosition, // Výchozí souřadnice
+                zoom: 14
+            });
+
+            // Načtení polohy hráče a pravidelná aktualizace mapy
+            trackPlayerLocation();
+            setInterval(() => updateMapPosition(), 15000); // Každých 15 sekund aktualizuj pozici
+
+            // Přidání posluchačů pro interakce s mapou
+            map.addListener("click", resetInactivityTimer);
+            map.addListener("drag", resetInactivityTimer);
+            map.addListener("zoom_changed", resetInactivityTimer);
+        }
+
+        // Funkce pro sledování polohy hráče
+        function trackPlayerLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const playerLat = position.coords.latitude;
+                        const playerLng = position.coords.longitude;
+
+                        lastKnownPosition = { lat: playerLat, lng: playerLng }; // Uložení poslední známé pozice
+                        
+                        // Nastavení mapy na pozici hráče
+                        map.setCenter(lastKnownPosition);
+                        map.setZoom(16); // Úroveň přiblížení
+
+                        // Přidání markeru pro hráče, nebo jeho aktualizace
+                        if (!playerMarker) {
+                            playerMarker = new google.maps.Marker({
+                                position: lastKnownPosition,
                                 map: map,
-                                title: question.question // Titulek je text otázky
+                                title: "Vaše pozice"
                             });
-
-                            // Volitelně: Zobrazení detaily otázky při kliknutí na marker
-                            const infoWindow = new google.maps.InfoWindow({
-                                content: `<h3>${question.question}</h3>`
-                            });
-
-                            marker.addListener('click', function() {
-                                infoWindow.open(map, marker);
-                            });
+                        } else {
+                            playerMarker.setPosition(lastKnownPosition);
                         }
-                    });
-                })
-                .catch(error => console.error('Chyba při načítání otázek:', error));
-            </script>
+
+                        console.log("Poloha hráče:", playerLat, playerLng);
+                    },
+                    (error) => {
+                        console.error("Chyba při získávání polohy:", error);
+                    }
+                );
+            } else {
+                alert("Geolokace není podporována tímto prohlížečem.");
+            }
+        }
+
+        // Funkce pro aktualizaci pozice na mapě bez závislosti na pohybu
+        function updateMapPosition() {
+            if (lastKnownPosition && playerMarker) {
+                // Aktualizuj střed mapy na poslední známou pozici a přiblížení
+                map.setCenter(lastKnownPosition);
+                map.setZoom(18); // Větší úroveň přiblížení
+
+                console.log("Mapa byla automaticky zoomnuta a centrována na pozici hráče.");
+            } else {
+                console.warn("Poloha hráče není známá.");
+            }
+        }
+
+        // Funkce pro resetování časovače nečinnosti
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimeout); // Zruší předchozí časovač
+
+            // Nastaví nový časovač pro nečinnost
+            inactivityTimeout = setTimeout(() => {
+                console.log("Neaktivita detekována, resetování mapy...");
+                updateMapPosition(); // Po 15 sekundách nečinnosti se automaticky zoomne na hráče
+            }, inactivityDuration);
+        }
+
+    </script>
 
 </head>
 <body>
