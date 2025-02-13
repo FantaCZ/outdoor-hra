@@ -34,12 +34,22 @@ fetch('api/submit_answer.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-        question_id: 1,  // Tohle nahraď skutečnými daty
+        question_id: 1,
         answer: "Moje odpověď",
         user_id: 123
     })
 })
-.then(response => response.json())
-.then(data => console.log("Server odpověděl:", data))
+.then(response => response.text()) // Získání odpovědi jako text
+.then(text => {
+    try {
+        const data = JSON.parse(text); // Pokus o parsování do JSON
+        console.log("Server odpověděl:", data);
+    } catch (error) {
+        console.error('Chyba při parsování JSON:', error);
+        console.error('Odpověď serveru:', text); // Zobrazí odpověď serveru pro debug
+    }
+})
 .catch(error => console.error('Chyba:', error));
+
+
 

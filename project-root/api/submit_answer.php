@@ -11,6 +11,7 @@ exit;
 
 
 
+
 $question_id = $_POST["question_id"];
 $answer = trim($_POST["answer"]);
 
@@ -25,4 +26,7 @@ if (strtolower($answer) === strtolower($correct_answer)) {
 } else {
     echo "incorrect";
 }
+
+
+echo json_encode(array("message" => "Připojení k databázi bylo úspěšné."));
 ?>

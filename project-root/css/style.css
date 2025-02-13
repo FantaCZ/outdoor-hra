@@ -5,8 +5,8 @@
 }
 
 /* Mobile view adjustments */
-@media (max-width: 600px) {
+@media (max-width: 200px) {
     #map {
-        height: 250px;  /* Smaller map size for mobile */
+        height: 100px;  /* Smaller map size for mobile */
     }
 }

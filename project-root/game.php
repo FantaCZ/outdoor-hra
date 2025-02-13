@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <title>Úniková hra</title>
     <!-- Načítání Google Maps API s atributem async a defer pro správné načítání -->
@@ -7,7 +8,7 @@
 
 
  
-    <script src="project-root\js\logika_hry.js"></script>
+    <script src="/outdoor-hra/project-root/js/logika_hry.js"></script>
 
 
     <script>
@@ -23,7 +24,11 @@
 
 </head>
 <body>
+<link rel="stylesheet" href="/outdoor-hra/project-root/css/style.css">
+
+
     <h1>Úniková hra</h1>
+
     <div id="map" style="width: 100%; height: 500px;"></div>
     <div id="questionBox" style="display: none;">
         <p id="questionText"></p>

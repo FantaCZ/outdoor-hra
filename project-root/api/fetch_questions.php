@@ -1,7 +1,5 @@
-<!-- Načítani otazek z databaze
- -->
- <?php
-include('../db.php');  // Pokud je db.php v kořenovém adresáři 
+<?php
+include('../db.php');  // Pokud je db.php v kořenovém adresáři
 
 // SQL dotaz na výběr všech otázek z databáze
 $sql = "SELECT * FROM questions";
@@ -15,7 +13,8 @@ if ($result->num_rows > 0) {
         $questions[] = $row;
     }
 } else {
-    echo "0 results"; // Pokud nejsou žádné výsledky
+    // Pokud nejsou žádné výsledky, vrátí chybovou zprávu
+    echo json_encode(["error" => "0 results"]);
 }
 
 // Vrátí otázky ve formátu JSON
