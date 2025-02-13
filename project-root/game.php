@@ -19,7 +19,34 @@
         });
         console.log("Mapa byla vytvořena.");
     }
-    </script>
+
+                // Načíst otázky z API nebo souboru
+                fetch('api/fetch_questions.php') // Tento endpoint by měl vracet JSON s otázkami a souřadnicemi
+                .then(response => response.json())
+                .then(data => {
+                    // Pro každou otázku přidáme marker na mapu
+                    data.forEach(question => {
+                        // Ujistěte se, že každá otázka má lat a lng
+                        if (question.lat && question.lng) {
+                            const marker = new google.maps.Marker({
+                                position: { lat: question.lat, lng: question.lng },
+                                map: map,
+                                title: question.question // Titulek je text otázky
+                            });
+
+                            // Volitelně: Zobrazení detaily otázky při kliknutí na marker
+                            const infoWindow = new google.maps.InfoWindow({
+                                content: `<h3>${question.question}</h3>`
+                            });
+
+                            marker.addListener('click', function() {
+                                infoWindow.open(map, marker);
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Chyba při načítání otázek:', error));
+            </script>
 
 </head>
 <body>
