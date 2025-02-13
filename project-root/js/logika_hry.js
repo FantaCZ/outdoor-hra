@@ -28,36 +28,18 @@ function initMap() {
     marker.addListener('click', () => {
         infowindow.open(map, marker);
     });
-
-    // Načítání otázek z databáze
-    fetch('/project-root/api/fetch_questions.php')
-    .then(response => response.json())
-    .then(questions => {
-        questions.forEach(question => {
-            // Zkontroluj, zda jsou souřadnice platné
-            if (question.location_lat && question.location_lng) {
-                const lat = parseFloat(question.location_lat);
-                const lng = parseFloat(question.location_lng);
-
-                // Zobrazení markeru pro každou otázku na mapě
-                const marker = new google.maps.Marker({
-                    position: { lat, lng },
-                    map: map,
-                    title: question.question_text // Text, který se zobrazí při najetí na marker
-                });
-
-                // Infowindow pro každý marker
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<p>${question.question_text}</p>`
-                });
-
-                marker.addListener('click', () => {
-                    infowindow.open(map, marker);
-                });
-            }
-        });
-    })
-    .catch(error => {
-        console.error("Chyba při načítání otázek:", error);
-    });
 }
+
+fetch('api/submit_answer.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+        question_id: 1,  // Tohle nahraď skutečnými daty
+        answer: "Moje odpověď",
+        user_id: 123
+    })
+})
+.then(response => response.json())
+.then(data => console.log("Server odpověděl:", data))
+.catch(error => console.error('Chyba:', error));
+

@@ -1,5 +1,12 @@
+/* Default map styling for larger screens */
 #map {
     width: 100%;
-    height: 500px;
-    border: 2px solid red;  /* Rámec pro kontrolu */
+    height: 400px;
+}
+
+/* Mobile view adjustments */
+@media (max-width: 600px) {
+    #map {
+        height: 250px;  /* Smaller map size for mobile */
+    }
 }

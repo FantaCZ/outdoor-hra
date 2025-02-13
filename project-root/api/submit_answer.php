@@ -1,6 +1,16 @@
 <?php
 include "../db.php";
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Zkusíme zjistit, co přesně přichází
+echo "RAW INPUT:\n";
+echo file_get_contents("php://input");
+exit;
+
+
+
 $question_id = $_POST["question_id"];
 $answer = trim($_POST["answer"]);
 

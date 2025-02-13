@@ -5,8 +5,9 @@
     <!-- Načítání Google Maps API s atributem async a defer pro správné načítání -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap"></script>
 
-    <!-- Tvůj vlastní JS soubor, který obsahuje funkci initMap -->
-    <script src="project-root/js/logika_hry.js" defer></script>
+
+ 
+    <script src="project-root\js\logika_hry.js"></script>
 
 
     <script>
