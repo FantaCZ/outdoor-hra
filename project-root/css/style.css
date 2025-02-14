@@ -72,37 +72,6 @@ input#register-submit:hover {
     font-family: Arial, sans-serif;
 }
 
-/* menu info */
-.index-nav {
-    background-color: #333;
-    padding: 15px 0;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Přidání stínu pro lepší hloubku */
-    border-radius: 8px; /* Zaoblení rohů */
-}
-
-.index-nav ul {
-    list-style-type: none;
-}
-
-.index-nav ul li {
-    display: inline-block;
-    margin-right: 20px;
-}
-
-.index-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    padding: 8px 16px;
-    transition: background-color 0.3s ease;
-}
-
-.index-nav ul li a:hover {
-    background-color: #4CAF50;
-    border-radius: 5px;
-}
-
 /* Styl pro hlavní obsah stránky */
 .index-content {
     text-align: center;
@@ -121,6 +90,79 @@ input#register-submit:hover {
 
 .index-content p a:hover {
     color: #45a049;
+}
+
+/* Styl pro přihlašovací kontejner */
+.login-container {
+    background-color: white;
+    max-width: 400px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* Styl pro formulář přihlášení */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.login-form label {
+    font-weight: bold;
+    color: #333;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.login-form input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-form input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Styl pro chybové zprávy */
+.error {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Styl pro odkazy pod formulářem */
+.login-container p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-container a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
 }
 
 /* Styl pro responsivitu (přizpůsobení mobilním zařízením) */
