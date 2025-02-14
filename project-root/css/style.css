@@ -8,10 +8,8 @@
 /* Základní styl pro celé tělo */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
+    background-color: #f4f4f4; /* Jemná barva pozadí */
+    color: #333; /* Decentní barva textu */
 }
 
 /* Styl pro hlavičku */
@@ -29,7 +27,7 @@ form.register-form {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    margin-top: 20px;
 }
 
 /* Styl pro jednotlivé vstupy (input) v registraci */
@@ -87,22 +85,23 @@ input#register-submit:hover {
     color: #45a049;
 }
 
-
+/* Styl pro přihlašovací kontejner */
 .login-container {
     background-color: white;
     max-width: 400px;
-    width: 100%; /* Nastavení na 100% pro flexibilitu */
-    padding: 20px;
+    width: 100%;
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
 /* Styl pro formulář přihlášení */
-/* .login-form {
+.login-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
-} */
+}
 
 .login-form label {
     font-weight: bold;
@@ -218,3 +217,99 @@ input#register-submit:hover {
 .game-page #questionBox button:hover {
     background-color: #45a049;
 }
+
+/* Styl pro fotogalerii */
+.photo-gallery {
+    text-align: center;
+    padding: 20px;
+}
+
+.photo-gallery .photos {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.photo-gallery .photos img {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer; /* Změna kurzoru na pointer */
+}
+
+.photo-gallery .photos img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.photo-gallery .photos img:active {
+    transform: scale(1.2); /* Zvětšení obrázku při kliknutí */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Styl pro modal */
+.modal {
+    display: none; /* Skrytý modal */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    margin: 15% auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+.modal-content img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Styl pro responsivitu (přizpůsobení mobilním zařízením) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+        background-size: contain; /* Na mobilních zařízeních obrázek se přizpůsobí */
+    }
+
+    form.register-form {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    input#register-username,
+    input#register-password,
+    input#register-confirm-password,
+    input#register-submit {
+        font-size: 1em;
+    }
+}
+
+
