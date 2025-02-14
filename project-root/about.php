@@ -18,5 +18,9 @@
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
+    <section>
+        <h2>O mně</h2>
+        <p>Jsem nadšený vývojář, který miluje vytváření interaktivních her. Mým cílem je přinášet zábavu a vzdělávání prostřednictvím inovativních herních zážitků.</p>
+    </section>
 </body>
 </html>

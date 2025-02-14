@@ -20,7 +20,17 @@
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
-    <h1>Vítejte na naší stránce!</h1>
+    <h1>Vítejte v pražském escape roomu!</h1>
     <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více o nás.</p>
+
+    <!-- Fotky -->
+    <section class="photo-gallery">
+        <h2>Fotogalerie</h2>
+        <div class="photos">
+            <img src="assets/praha_main.png" alt="Photo 1" style="width: 150px; height: auto;">
+            <img src="assets/photo2.jpg" alt="Photo 2" style="width: 150px; height: auto;">
+            <img src="assets/photo3.jpg" alt="Photo 3" style="width: 150px; height: auto;">
+        </div>
+    </section>
 </body>
 </html>
