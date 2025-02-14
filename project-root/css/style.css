@@ -12,12 +12,6 @@ body {
     color: #333;
     line-height: 1.6;
     padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Výška obrazovky */
-    flex-direction: column; /* Svislé zarovnání */
-
 }
 
 /* Styl pro hlavičku */
@@ -35,6 +29,7 @@ form.register-form {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
 }
 
 /* Styl pro jednotlivé vstupy (input) v registraci */
@@ -92,23 +87,22 @@ input#register-submit:hover {
     color: #45a049;
 }
 
-/* Styl pro přihlašovací kontejner */
+
 .login-container {
     background-color: white;
     max-width: 400px;
-    width: 100%;
-    padding: 30px;
+    width: 100%; /* Nastavení na 100% pro flexibilitu */
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
 }
 
 /* Styl pro formulář přihlášení */
-.login-form {
+/* .login-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
+} */
 
 .login-form label {
     font-weight: bold;
@@ -224,25 +218,3 @@ input#register-submit:hover {
 .game-page #questionBox button:hover {
     background-color: #45a049;
 }
-
-/* Styl pro responsivitu (přizpůsobení mobilním zařízením) */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-        background-size: contain; /* Na mobilních zařízeních obrázek se přizpůsobí */
-    }
-
-    form.register-form {
-        max-width: 100%;
-        padding: 15px;
-    }
-
-    input#register-username,
-    input#register-password,
-    input#register-confirm-password,
-    input#register-submit {
-        font-size: 1em;
-    }
-}
-
-

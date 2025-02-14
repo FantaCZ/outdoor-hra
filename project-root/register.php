@@ -50,10 +50,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrace</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/nav.css"> <!-- Added nav.css -->
+    <link rel="stylesheet" href="css/style.css"> <!-- Added style.css -->
 </head>
 <body>
-    <nav class="index-nav">
+<nav class="index-nav">
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
             <li><a href="game.php" class="nav-link">Hrát</a></li>
@@ -63,22 +64,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
-
-    <h2 class="register-heading">Registrace uživatele</h2>
-
-    <form action="register.php" method="POST" class="register-form">
-        <label for="username">Uživatelské jméno:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
-
-        <label for="password">Heslo:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <label for="confirm_password">Potvrďte heslo:</label><br>
-        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
-
-        <input type="submit" value="Registrovat se" id="register-submit">
-
-        <p>Máte účet? <a href="login.php">Přihlaste se zde</a></p>
+    <br><br>
+    <h2 class="register-heading">Registrace</h2> <!-- Added class "register-heading" -->
+    <form action="register.php" method="post" class="register-form"> <!-- Added class "register-form" -->
+        <label for="username">Uživatelské jméno:</label>
+        <input type="text" id="register-username" name="username" required><br><br> <!-- Added id "register-username" -->
+        <label for="password">Heslo:</label>
+        <input type="password" id="register-password" name="password" required><br><br> <!-- Added id "register-password" -->
+        <label for="confirm_password">Potvrzení hesla:</label>
+        <input type="password" id="register-confirm-password" name="confirm_password" required><br><br> <!-- Added id "register-confirm-password" -->
+        <input type="submit" id="register-submit" value="Registrovat"> <!-- Added id "register-submit" -->
     </form>
 </body>
 </html>
