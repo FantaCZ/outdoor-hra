@@ -22,7 +22,6 @@ function initMap() {
     });
 
     console.log("Mapa byla vytvořena:", map);
-    fetchQuestionsAndAddMarkers(); // Načtení otázek a přidání markerů
 }
 
 function addMarker(lat, lng, questionText) {
@@ -38,7 +37,7 @@ function addMarker(lat, lng, questionText) {
     });
 
     console.log("Marker přidán:", marker);
-    
+
 }
 
  // Žádost o GPS polohu hráče
@@ -85,36 +84,33 @@ function addMarker(lat, lng, questionText) {
     console.error("Geolokace není podporována.");
 }
 
-
-
-
-    // Načtení otázek z API
-    fetch('api/fetch_questions.php')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(question => {
-                const marker = new google.maps.Marker({
-                    position: { 
-                        lat: parseFloat(question.location_lat), 
-                        lng: parseFloat(question.location_lng) 
-                    },
-                    map: map,
-                    title: `Otázka #${question.id}`
-                });
-
-                // InfoWindow s ID otázky
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `<div><strong>Otázka ID:</strong> ${question.id}</div>`
-                });
-
-                marker.addListener("click", () => {
-                    infoWindow.open(map, marker);
-                });
+// Načtení otázek z API
+fetch('http://localhost/project-root/api/fetch_questions.php')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(question => {
+            const marker = new google.maps.Marker({
+                position: {
+                    lat: parseFloat(question.location_lat),
+                    lng: parseFloat(question.location_lng)
+                },
+                map: map,
+                title: `Otázka #${question.id}`
             });
-        })
-        .catch(error => console.error("Chyba při načítání otázek:", error));
 
-fetch('api/submit_answer.php', {
+            // InfoWindow s ID otázky
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div><strong>Otázka ID:</strong> ${question.id}</div>`
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+        });
+    })
+    .catch(error => console.error("Chyba při načítání otázek:", error));
+
+fetch('http://localhost/project-root/api/submit_answer.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },  // Ujistíme se, že je content type application/json
     body: JSON.stringify({
