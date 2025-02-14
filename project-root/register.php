@@ -1,7 +1,7 @@
 <?php
 // Zahrnutí souboru pro připojení k databázi
 include 'db.php';
-
+coze
 // Zpracování formuláře
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
