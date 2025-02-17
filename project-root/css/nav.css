@@ -44,6 +44,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+
+
 @media screen and (max-width: 768px) {
     .index-nav {
         padding: 8px 0;
@@ -56,7 +58,7 @@
         max-width: 100%;
         box-sizing: border-box;
     }
-    
+
     .index-nav ul li,
     .index-nav ul li a {
         width: 100%;

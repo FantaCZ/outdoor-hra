@@ -102,6 +102,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
 
 <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="css/nav.css">
 <nav class="index-nav">
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>

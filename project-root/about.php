@@ -6,9 +6,11 @@
     <meta name="theme-color" content="#2ecc71">
     <title>About Us</title>
     <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="about-page">
     <nav class="index-nav">
+        <span class="menu-toggle">☰</span>
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
             <li><a href="game.php" class="nav-link">Hrát</a></li>
@@ -18,9 +20,10 @@
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
-    <section>
+    <section class="about-section">
         <h2>O mně</h2>
         <p>Jsem nadšený vývojář, který miluje vytváření interaktivních her. Mým cílem je přinášet zábavu a vzdělávání prostřednictvím inovativních herních zážitků.</p>
+        <img src="assets/profile.jpg" alt="Profile Photo" style="width: 200px; height: auto;">
     </section>
 </body>
 </html>

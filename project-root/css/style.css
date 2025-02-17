@@ -12,14 +12,25 @@ body {
     color: #333; /* Decentní barva textu */
 }
 
-/* Styl pro hlavičku */
+/* Přidáme wrapper pro registrační stránku */
+.register-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Upravený styl pro hlavičku */
 h2.register-heading {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
+    width: 100%;
 }
 
-/* Styl pro formulář registrace */
+/* Upravený styl pro formulář registrace */
 form.register-form {
     background-color: white;
     max-width: 400px;
@@ -27,7 +38,7 @@ form.register-form {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    margin: 0 auto;
 }
 
 /* Styl pro jednotlivé vstupy (input) v registraci */
@@ -58,6 +69,13 @@ input#register-submit {
 /* Při najetí myší na tlačítko */
 input#register-submit:hover {
     background-color: #45a049;
+}
+
+/* Centrování error zpráv v registraci */
+.register-wrapper .error {
+    max-width: 400px;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 /* Styly pro hlavní stránku s třídou index-page */
