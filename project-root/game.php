@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="cs">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Úniková hra</title>
-<!--     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
- -->
-
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="css/nav.css">
     <script src="./js/logika_hry.js"></script>
 
     <script>
@@ -98,11 +98,10 @@
     </script>
 
 </head>
-<body>
+<body class="game-page">
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
 
-<link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="css/nav.css">
+
 <nav class="index-nav">
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
@@ -113,10 +112,18 @@
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
-
-    <h1>Úniková hra</h1>
-
-    <button onclick="submitAnswer()">Odeslat odpověď</button>
+<br>
+    <div class="game-container">
+        <h1>Úniková hra</h1>
+        
+        <div id="map" style="width: 100%; height: 500px;"></div>
+        
+        <div id="questionBox" style="display: block;">
+            <p id="questionText">Zde se zobrazí otázka</p>
+            <input type="text" id="answerInput" placeholder="Zadejte odpověď...">
+            <button onclick="submitAnswer()">Odpovědět</button>
+        </div>
+    </div>
 
     <script>
         function submitAnswer() {
@@ -138,14 +145,6 @@
             // .catch(error => console.error('Error:', error));
         }
     </script>
-
-    <div id="map" style="width: 100%; height: 500px;"></div>
-    <div id="questionBox" style="display: block;">
-        <p id="questionText"></p>
-        <input type="text" id="answerInput">
-        <button onclick="submitAnswer()">Odpovědět</button>
-    </div>
-
 
 </body>
 </html>

@@ -10,7 +10,6 @@
 </head>
 <body class="about-page">
     <nav class="index-nav">
-        <span class="menu-toggle">☰</span>
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
             <li><a href="game.php" class="nav-link">Hrát</a></li>
