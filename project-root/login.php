@@ -53,7 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/nav.css"> 
 </head>
 <body>
-    <nav class="index-nav">
+co bro
+<nav class="index-nav">
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
             <li><a href="game.php" class="nav-link">Hrát</a></li>
