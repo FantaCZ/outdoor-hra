@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
+        
 
         // Pokud uživatel existuje, ověříme heslo
         if ($stmt->num_rows > 0) {
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/nav.css"> 
 </head>
 <body>
-    
+    coje bratu
     <nav class="index-nav">
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
@@ -65,7 +66,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </nav>
     <br><br>
         <h2>Přihlášení</h2>
-        
         <?php
         if (isset($error_message)) {
             echo "<p class='error'>$error_message</p>";
