@@ -1,23 +1,10 @@
 // Funkce pro inicializaci mapy, která bude globálně dostupná
-function initMap() {
-    console.log("Funkce initMap byla zavolána.");
-
-    // Vytvoření mapy
-    const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 50.0903, lng: 14.4000 }, // Výchozí souřadnice pro mapu
-        zoom: 14
-    });
-
-    console.log("Mapa byla vytvořena.");
-
-
-}
 let map; // Definuj mapu globálně
 
 function initMap() {
     console.log("Inicializace mapy...");
     map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 50.0903, lng: 14.4000 },
+        center: { lat: 50.0903, lng: 14.4000 }, // Výchozí souřadnice pro mapu
         zoom: 14
     });
 
@@ -37,11 +24,10 @@ function addMarker(lat, lng, questionText) {
     });
 
     console.log("Marker přidán:", marker);
-
 }
 
- // Žádost o GPS polohu hráče
- if (navigator.geolocation) {
+// Žádost o GPS polohu hráče
+if (navigator.geolocation) {
     navigator.geolocation.watchPosition(position => {
         const playerLocation = {
             lat: position.coords.latitude,
@@ -129,7 +115,3 @@ fetch('http://localhost/project-root/api/submit_answer.php', {
     }
 })
 .catch(error => console.error('Chyba:', error));
-
-
-
-
