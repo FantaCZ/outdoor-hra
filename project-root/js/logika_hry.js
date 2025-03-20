@@ -7,7 +7,7 @@ function initMap() {
     console.log("Inicializace mapy...");
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 50.0903, lng: 14.4000 }, // Výchozí souřadnice pro mapu
-        zoom: 14
+        zoom: 17
     });
 
     console.log("Mapa byla vytvořena:", map);
@@ -26,6 +26,17 @@ function addMarker(lat, lng, questionText) {
     });
 
     console.log("Marker přidán:", marker);
+}
+
+function centerMapOnPlayer(playerLocation, zoomLevel = 17) {
+    if (!map) {
+        console.error("Chyba: Mapa není inicializovaná!");
+        return;
+    }
+
+    map.setCenter(playerLocation);
+    map.setZoom(zoomLevel);
+    console.log("Mapa vycentrována na polohu hráče a přiblížena na úroveň:", zoomLevel);
 }
 
 // Žádost o GPS polohu hráče
@@ -62,9 +73,15 @@ if (navigator.geolocation) {
         });
 
         // Aktualizace mapy při pohybu hráče
-        map.setCenter(playerLocation);
+        centerMapOnPlayer(playerLocation, 17); // Přiblížení na úroveň 17
         playerMarker.setPosition(playerLocation);
         radiusCircle.setCenter(playerLocation);
+
+        // Nastavení intervalu pro aktualizaci přiblížení mapy každých 30 sekund
+        setInterval(() => {
+            centerMapOnPlayer(playerLocation, 17); // Přiblížení na úroveň 17
+        }, 30000); // 30000 ms = 30 sekund
+
     }, error => {
         console.error("Chyba při získávání GPS souřadnic:", error);
     }, { enableHighAccuracy: true });
@@ -98,6 +115,7 @@ fetch('http://localhost/project-root/api/fetch_questions.php')
     })
     .catch(error => console.error("Chyba při načítání otázek:", error));
 
+// Odeslání odpovědi na otázku
 fetch('http://localhost/project-root/api/submit_answer.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },  // Ujistíme se, že je content type application/json
