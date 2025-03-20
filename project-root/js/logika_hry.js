@@ -1,5 +1,7 @@
 // Funkce pro inicializaci mapy, která bude globálně dostupná
-let map; // Definuj mapu globálně
+if (typeof map === 'undefined') {
+    var map; // Definuj mapu globálně
+}
 
 function initMap() {
     console.log("Inicializace mapy...");

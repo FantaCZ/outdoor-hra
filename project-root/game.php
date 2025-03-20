@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="css/nav.css">
     <script src="./js/logika_hry.js"></script>
-
+<!-- 
     <script>
         let map;
         let playerMarker;
@@ -15,7 +15,7 @@
         const inactivityDuration = 15000; // 15 sekund nečinnosti před resetováním mapy
         let lastKnownPosition = { lat: 50.0903, lng: 14.4000 }; // Výchozí pozice hráče
 
-        // Funkce pro inicializaci mapy
+    
         function initMap() {
             console.log("Inicializace mapy...");
 
@@ -95,7 +95,7 @@
             }, inactivityDuration);
         }
 
-    </script>
+    </script> -->
 
 </head>
 <body class="game-page">
