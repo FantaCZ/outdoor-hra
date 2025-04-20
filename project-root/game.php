@@ -132,13 +132,13 @@
                 answer: "Moje odpověď" // Tady zadej odpověď
             };
 
-            const response = fetch('submit_answer.php', {
+            const response = fetch('./api/submit_answer.php', { // Opravená cesta
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams(data) // Převede objekt na URL-encoded string
-            })
+            });
             console.log(response)
             // .then(response => response.json())
             // .then(result => console.log(result)) // Výpis odpovědi ze serveru
