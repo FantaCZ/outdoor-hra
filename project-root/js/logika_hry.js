@@ -90,7 +90,7 @@ if (navigator.geolocation) {
 }
 
 // Načtení otázek z API
-fetch('http://localhost/project-root/api/fetch_questions.php')
+fetch('http://localhost/outdoor-hra/project-root/api/fetch_questions.php')
     .then(response => response.json())
     .then(data => {
         data.forEach(question => {
