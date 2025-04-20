@@ -1,10 +1,9 @@
 .index-nav {
-    /* Odstraníme position: fixed */
-    background: linear-gradient(90deg, #28b463, #229954);
-    padding: 15px 0;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; /* Přidejte pozadí, aby byla navigace viditelná */
     z-index: 1000;
 }
 
