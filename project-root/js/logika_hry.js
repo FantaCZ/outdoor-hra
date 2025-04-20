@@ -91,8 +91,14 @@ if (navigator.geolocation) {
 
 // Načtení otázek z API
 fetch('http://localhost/outdoor-hra/project-root/api/fetch_questions.php')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json(); // Zpracování odpovědi jako JSON
+    })
     .then(data => {
+        console.log("Načtená data:", data);
         data.forEach(question => {
             const marker = new google.maps.Marker({
                 position: {
@@ -103,7 +109,6 @@ fetch('http://localhost/outdoor-hra/project-root/api/fetch_questions.php')
                 title: `Otázka #${question.id}`
             });
 
-            // InfoWindow s ID otázky
             const infoWindow = new google.maps.InfoWindow({
                 content: `<div><strong>Otázka ID:</strong> ${question.id}</div>`
             });
