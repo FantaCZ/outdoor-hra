@@ -116,9 +116,9 @@ fetch('http://localhost/outdoor-hra/project-root/api/fetch_questions.php')
     .catch(error => console.error("Chyba při načítání otázek:", error));
 
 // Odeslání odpovědi na otázku
-fetch('http://localhost/project-root/api/submit_answer.php', {
+fetch('http://localhost/outdoor-hra/project-root/api/submit_answer.php', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },  // Ujistíme se, že je content type application/json
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
         question_id: 1,
         answer: "Moje odpověď",
