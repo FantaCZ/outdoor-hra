@@ -24,11 +24,14 @@
 //}
 //
 //$conn->close();  // Zavření připojení k databázi
+header('Content-Type: application/json');
+
+// Simulace dat otázek
 $questions = [
-        ["id" => 1, "question_text" => "Otázka1", "location_lat" => 50.09030000, "location_lng" => 14.40000000],
-        ["id" => 2, "question_text" => "Jaké je heslo do bažiny?", "location_lat" => 50.098948337205265, "location_lng" => 14.372438132473397],
+    ['id' => 1, 'location_lat' => 50.0903, 'location_lng' => 14.4000],
+    ['id' => 2, 'location_lat' => 50.0910, 'location_lng' => 14.4010]
 ];
 
+// Vrácení dat jako JSON
 echo json_encode($questions);
-
 ?>
