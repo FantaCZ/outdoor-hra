@@ -1,9 +1,8 @@
 .index-nav {
-    /* Odstraníme position: fixed */
     background: linear-gradient(90deg, #28b463, #229954);
     padding: 15px 0;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    position: fixed;
     top: 0;
     z-index: 1000;
 }
@@ -48,7 +47,12 @@
 
 @media screen and (max-width: 768px) {
     .index-nav {
+        position: fixed; /* Navigace zůstane pevná */
+        top: 0;
+        width: 100%; /* Zajistí, že navigace pokryje celou šířku */
+        z-index: 1000; /* Navigace bude nad ostatními prvky */
         padding: 8px 0;
+        background: linear-gradient(90deg, #28b463, #229954); /* Přidání pozadí pro viditelnost */
     }
 
     .index-nav ul {

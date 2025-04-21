@@ -35,3 +35,4 @@ $questions = [
 // Vrácení dat jako JSON
 echo json_encode($questions);
 ?>
+
