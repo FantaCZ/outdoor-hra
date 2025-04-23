@@ -26,6 +26,8 @@
 //$conn->close();  // Zavření připojení k databázi
 header('Content-Type: application/json');
 
+funguje ten git pull?
+
 // Simulace dat otázek
 $questions = [
     ['id' => 1, 'location_lat' => 50.0903, 'location_lng' => 14.4000],
