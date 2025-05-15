@@ -1,6 +1,6 @@
 .index-nav {
     background: linear-gradient(90deg, #28b463, #229954);
-    padding: 15px 0;
+    padding: 7px 0; /* menší výška */
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
@@ -14,7 +14,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
+    gap: 8px; /* menší mezery */
 }
 
 .index-nav ul li {
@@ -26,10 +26,10 @@
     color: white;
     text-decoration: none;
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 1.1rem;
+    font-size: 1rem; /* menší písmo */
     font-weight: 500;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 6px 12px; /* menší vnitřní okraje */
+    border-radius: 5px; /* méně zaoblené rohy */
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -44,6 +44,49 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Hamburger ikona pro mobil */
+.nav-toggle {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    z-index: 1100;
+    background: none;
+    border: none;
+}
+
+.nav-toggle span,
+.nav-toggle span:before,
+.nav-toggle span:after {
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: 0.3s;
+    content: '';
+}
+
+.nav-toggle span {
+    top: 14px;
+    left: 4px;
+}
+
+.nav-toggle span:before {
+    content: '';
+    top: -8px;
+    left: 0;
+}
+
+.nav-toggle span:after {
+    content: '';
+    top: 8px;
+    left: 0;
+}
 
 @media screen and (max-width: 768px) {
     .index-nav {
@@ -51,16 +94,19 @@
         top: 0;
         width: 100%; /* Zajistí, že navigace pokryje celou šířku */
         z-index: 1000; /* Navigace bude nad ostatními prvky */
-        padding: 8px 0;
+        padding: 4px 0; /* ještě menší výška na mobilu */
         background: linear-gradient(90deg, #28b463, #229954); /* Přidání pozadí pro viditelnost */
     }
 
     .index-nav ul {
         flex-direction: column;
         padding: 5px;
-        gap: 8px;
+        gap: 4px;
         max-width: 100%;
         box-sizing: border-box;
+        transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
+        overflow: hidden;
+        max-height: 500px;
     }
 
     .index-nav ul li,
@@ -71,8 +117,20 @@
     }
 
     .index-nav ul li a {
-        padding: 12px 15px;
-        font-size: 1rem;
+        padding: 8px 10px;
+        font-size: 0.95rem;
         text-align: center;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .index-nav.nav-collapsed ul {
+        max-height: 0;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
     }
 }

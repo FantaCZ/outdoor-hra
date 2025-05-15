@@ -140,3 +140,14 @@ fetch('http://localhost/outdoor-hra/project-root/api/submit_answer.php', {
     }
 })
 .catch(error => console.error('Chyba:', error));
+
+// Přidat do vašeho JS souboru nebo do <script> na stránce
+document.addEventListener('DOMContentLoaded', function() {
+    var navToggle = document.querySelector('.nav-toggle');
+    var nav = document.querySelector('.index-nav');
+    if (navToggle && nav) {
+        navToggle.addEventListener('click', function() {
+            nav.classList.toggle('nav-collapsed');
+        });
+    }
+});

@@ -11,7 +11,10 @@
 
 
     <!-- Obsah stránky -->
-    <nav class="index-nav">
+    <nav class="index-nav nav-collapsed">
+        <button class="nav-toggle" aria-label="Menu">
+            <span></span>
+        </button>
         <ul>
             <li><a href="index.php" class="nav-link">Domů</a></li>
             <li><a href="game.php" class="nav-link">Hrát</a></li>
@@ -42,15 +45,6 @@
         </div>
     </div>
 
-    <script>
-        function openModal(element) {
-            document.getElementById('myModal').style.display = "block";
-            document.getElementById('modalImage').src = element.src;
-        }
 
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
-    </script>
 </body>
 </html>

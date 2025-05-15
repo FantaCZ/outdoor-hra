@@ -140,9 +140,9 @@
                 body: new URLSearchParams(data) // Převede objekt na URL-encoded string
             });
             console.log(response)
-            // .then(response => response.json())
-            // .then(result => console.log(result)) // Výpis odpovědi ze serveru
-            // .catch(error => console.error('Error:', error));
+             .then(response => response.json())
+             .then(result => console.log(result)) // Výpis odpovědi ze serveru
+             .catch(error => console.error('Error:', error));
         }
     </script>
 
