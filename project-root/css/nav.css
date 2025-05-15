@@ -1,9 +1,10 @@
 .index-nav {
     background: linear-gradient(90deg, #28b463, #229954);
-    padding: 7px 0; /* menší výška */
+    padding: 7px 0;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: fixed;
+    position: fixed; /* Opraveno */
     top: 0;
+    width: 100%;     /* Přidáno pro správné roztažení */
     z-index: 1000;
 }
 

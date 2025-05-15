@@ -42,6 +42,12 @@ function centerMapOnPlayer(playerLocation, zoomLevel = 17) {
 // Žádost o GPS polohu hráče
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(position => {
+        // Přidej kontrolu, zda je Google Maps API načteno
+        if (typeof google === "undefined" || !google.maps) {
+            console.error("Google Maps API není načtena!");
+            return;
+        }
+
         const playerLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
