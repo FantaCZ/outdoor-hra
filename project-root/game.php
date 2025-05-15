@@ -7,100 +7,8 @@
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="css/nav.css">
     <script src="./js/logika_hry.js"></script>
-<!-- 
-    <script>
-        let map;
-        let playerMarker;
-        let inactivityTimeout; // Proměnná pro sledování nečinnosti
-        const inactivityDuration = 15000; // 15 sekund nečinnosti před resetováním mapy
-        let lastKnownPosition = { lat: 50.0903, lng: 14.4000 }; // Výchozí pozice hráče
-
-    
-        function initMap() {
-            console.log("Inicializace mapy...");
-
-            // Výchozí nastavení mapy
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: lastKnownPosition, // Výchozí souřadnice
-                zoom: 14
-            });
-
-            // Načtení polohy hráče a pravidelná aktualizace mapy
-            trackPlayerLocation();
-            setInterval(() => updateMapPosition(), 15000); // Každých 15 sekund aktualizuj pozici
-
-            // Přidání posluchačů pro interakce s mapou
-            map.addListener("click", resetInactivityTimer);
-            map.addListener("drag", resetInactivityTimer);
-            map.addListener("zoom_changed", resetInactivityTimer);
-        }
-
-        // Funkce pro sledování polohy hráče
-        function trackPlayerLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const playerLat = position.coords.latitude;
-                        const playerLng = position.coords.longitude;
-
-                        lastKnownPosition = { lat: playerLat, lng: playerLng }; // Uložení poslední známé pozice
-
-                        // Nastavení mapy na pozici hráče
-                        map.setCenter(lastKnownPosition);
-                        map.setZoom(16); // Úroveň přiblížení
-
-                        // Přidání markeru pro hráče, nebo jeho aktualizace
-                        if (!playerMarker) {
-                            playerMarker = new google.maps.Marker({
-                                position: lastKnownPosition,
-                                map: map,
-                                title: "Vaše pozice"
-                            });
-                        } else {
-                            playerMarker.setPosition(lastKnownPosition);
-                        }
-
-                        console.log("Poloha hráče:", playerLat, playerLng);
-                    },
-                    (error) => {
-                        console.error("Chyba při získávání polohy:", error);
-                    }
-                );
-            } else {
-                alert("Geolokace není podporována tímto prohlížečem.");
-            }
-        }
-
-        // Funkce pro aktualizaci pozice na mapě bez závislosti na pohybu
-        function updateMapPosition() {
-            if (lastKnownPosition && playerMarker) {
-                // Aktualizuj střed mapy na poslední známou pozici a přiblížení
-                map.setCenter(lastKnownPosition);
-                map.setZoom(18); // Větší úroveň přiblížení
-
-                console.log("Mapa byla automaticky zoomnuta a centrována na pozici hráče.");
-            } else {
-                console.warn("Poloha hráče není známá.");
-            }
-        }
-
-        // Funkce pro resetování časovače nečinnosti
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimeout); // Zruší předchozí časovač
-
-            // Nastaví nový časovač pro nečinnost
-            inactivityTimeout = setTimeout(() => {
-                console.log("Neaktivita detekována, resetování mapy...");
-                updateMapPosition(); // Po 15 sekundách nečinnosti se automaticky zoomne na hráče
-            }, inactivityDuration);
-        }
-
-    </script> -->
-
 </head>
 <body class="game-page">
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr5JJsSMeRiuPePFZrlgYiStn-JRLwsl0&callback=initMap" async defer></script>
-
 
 <nav class="index-nav">
         <ul>
@@ -115,8 +23,6 @@
 <br>
     <div class="game-container">
         <h1>Úniková hra</h1>
-        
-        <div id="map" style="width: 100%; height: 500px;"></div>
         
         <div id="questionBox" style="display: block;">
             <p id="questionText">Zde se zobrazí otázka</p>
@@ -145,6 +51,30 @@
              .catch(error => console.error('Error:', error));
         }
     </script>
+
+<!-- Zobrazení GPS souřadnic uživatele -->
+<div id="gps-coords" style="margin-top:10px; font-size:1.1em;">
+    <strong>Vaše poloha:</strong>
+    <span id="user-lat">Načítám...</span>, <span id="user-lng"></span>
+</div>
+<script>
+    // Získání GPS souřadnic uživatele a zobrazení pod mapou
+    function showUserGPS() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('user-lat').textContent = position.coords.latitude.toFixed(6);
+                document.getElementById('user-lng').textContent = position.coords.longitude.toFixed(6);
+            }, function() {
+                document.getElementById('user-lat').textContent = "Nelze zjistit polohu";
+                document.getElementById('user-lng').textContent = "";
+            });
+        } else {
+            document.getElementById('user-lat').textContent = "Geolokace není podporována";
+            document.getElementById('user-lng').textContent = "";
+        }
+    }
+    showUserGPS();
+</script>
 
 </body>
 </html>
