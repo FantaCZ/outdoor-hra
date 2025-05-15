@@ -26,7 +26,6 @@
 //$conn->close();  // Zavření připojení k databázi
 header('Content-Type: application/json');
 
-funguje ten git pull?
 
 // Simulace dat otázek
 $questions = [
