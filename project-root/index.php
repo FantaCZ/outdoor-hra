@@ -11,7 +11,7 @@
 
 
     <!-- Obsah stránky -->
-    <nav class="index-nav nav-collapsed">
+    <nav class="index-nav nav-collapsed" style="margin-bottom: 240px;">
         <button class="nav-toggle" aria-label="Menu">
             <span></span>
         </button>
@@ -24,6 +24,7 @@
             <li><a href="about.php" class="nav-link">O nás</a></li>
         </ul>
     </nav>
+
     <h1>Vítejte v pražském escape roomu!</h1>
     <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více o nás.</p>
 

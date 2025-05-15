@@ -1,3 +1,10 @@
+/* Odstraní výchozí okraje a paddingy */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .index-nav {
     background: linear-gradient(90deg, #28b463, #229954);
     padding: 7px 0;
