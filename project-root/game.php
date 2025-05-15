@@ -1,80 +1,77 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Úniková hra</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="css/nav.css">
-    <script src="./js/logika_hry.js"></script>
-</head>
-<body class="game-page">
+<?php
+// Database connection (adjust credentials as needed)
+$conn = new mysqli('localhost', 'root', '', 'escape_game');
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit;
+}
 
-<nav class="index-nav">
-        <ul>
-            <li><a href="index.php" class="nav-link">Domů</a></li>
-            <li><a href="game.php" class="nav-link">Hrát</a></li>
-            <li><a href="login.php" class="nav-link">Přihlášení</a></li>
-            <li><a href="register.php" class="nav-link">Registrace</a></li>
-            <li><a href="rules.php" class="nav-link">Pravidla</a></li>
-            <li><a href="about.php" class="nav-link">O nás</a></li>
-        </ul>
-    </nav>
-<br>
-    <div class="game-container">
-        <h1>Úniková hra</h1>
-        
-        <div id="questionBox" style="display: block;">
-            <p id="questionText">Zde se zobrazí otázka</p>
-            <input type="text" id="answerInput" placeholder="Zadejte odpověď...">
-            <button onclick="submitAnswer()">Odpovědět</button>
-        </div>
-    </div>
+// Fetch a random question with location
+$sql = "SELECT id, question_text, location_lat, location_lng FROM questions ORDER BY RAND() LIMIT 1";
+$result = $conn->query($sql);
 
-    <script>
-        function submitAnswer() {
-            const data = {
-                question_id: 1,        // Tady zadej ID otázky
-                answer: "Moje odpověď" // Tady zadej odpověď
-            };
-
-            const response = fetch('./api/submit_answer.php', { // Opravená cesta
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams(data) // Převede objekt na URL-encoded string
-            });
-            console.log(response)
-             .then(response => response.json())
-             .then(result => console.log(result)) // Výpis odpovědi ze serveru
-             .catch(error => console.error('Error:', error));
-        }
-    </script>
-
-<!-- Zobrazení GPS souřadnic uživatele -->
-<div id="gps-coords" style="margin-top:10px; font-size:1.1em;">
-    <strong>Vaše poloha:</strong>
-    <span id="user-lat">Načítám...</span>, <span id="user-lng"></span>
-</div>
-<script>
-    // Získání GPS souřadnic uživatele a zobrazení pod mapou
-    function showUserGPS() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                document.getElementById('user-lat').textContent = position.coords.latitude.toFixed(6);
-                document.getElementById('user-lng').textContent = position.coords.longitude.toFixed(6);
-            }, function() {
-                document.getElementById('user-lat').textContent = "Nelze zjistit polohu";
-                document.getElementById('user-lng').textContent = "";
-            });
-        } else {
-            document.getElementById('user-lat').textContent = "Geolokace není podporována";
-            document.getElementById('user-lng').textContent = "";
-        }
+if ($row = $result->fetch_assoc()) {
+    // Pokud je požadavek AJAX (např. fetch), vrať JSON
+    if (
+        isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+    ) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'id' => $row['id'],
+            'question' => $row['question_text'],
+            // 'allowed_distance' => 50, // Zakomentováno dle požadavku
+            'latitude' => floatval($row['location_lat']),
+            'longitude' => floatval($row['location_lng'])
+        ]);
+    } else {
+        // Jinak vypiš HTML
+        ?>
+        <!DOCTYPE html>
+        <html lang="cs">
+        <head>
+            <meta charset="UTF-8">
+            <title>Otázka</title>
+            <style>
+                #question-container {
+                    max-width: 500px;
+                    margin: 40px auto;
+                    padding: 24px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    background: #f9f9f9;
+                }
+                #question-text {
+                    font-size: 1.2em;
+                    margin-bottom: 16px;
+                }
+                #answer-input {
+                    width: 100%;
+                    padding: 8px;
+                    margin-bottom: 12px;
+                }
+                #answer-btn {
+                    padding: 8px 16px;
+                }
+            </style>
+        </head>
+        <body>
+            <div id="question-container">
+                <div id="question-text"><?php echo htmlspecialchars($row['question_text']); ?></div>
+                <form method="post">
+                    <input type="hidden" name="question_id" value="<?php echo $row['id']; ?>">
+                    <input type="text" id="answer-input" name="answer" placeholder="Zadejte odpověď">
+                    <button id="answer-btn" type="submit">Potvrdit</button>
+                </form>
+            </div>
+        </body>
+        </html>
+        <?php
     }
-    showUserGPS();
-</script>
+} else {
+    http_response_code(404);
+    echo json_encode(['error' => 'No question found']);
+}
 
-</body>
-</html>
+$conn->close();
