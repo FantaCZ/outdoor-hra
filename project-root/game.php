@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Database connection (adjust credentials as needed)
 $conn = new mysqli('localhost', 'root', '', 'escape_game');
 if ($conn->connect_error) {
@@ -7,11 +8,60 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Fetch a random question with location
-$sql = "SELECT id, question_text, location_lat, location_lng FROM questions ORDER BY RAND() LIMIT 1";
-$result = $conn->query($sql);
+// Získání celkového počtu otázek
+$totalQuestions = 0;
+$countResult = $conn->query("SELECT COUNT(*) AS total FROM questions");
+if ($countRow = $countResult->fetch_assoc()) {
+    $totalQuestions = (int)$countRow['total'];
+}
 
-if ($row = $result->fetch_assoc()) {
+// Inicializace počtu správných odpovědí v session
+if (!isset($_SESSION['correct_answers'])) {
+    $_SESSION['correct_answers'] = 0;
+}
+
+$wrongAnswer = false;
+$questionRow = null;
+$currentCorrectAnswer = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $submittedAnswer = isset($_POST['answer']) ? trim($_POST['answer']) : '';
+    $questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
+    // Získat otázku a správnou odpověď podle ID
+    $stmt = $conn->prepare("SELECT id, question_text, location_lat, location_lng, correct_answer FROM questions WHERE id = ?");
+    $stmt->bind_param("i", $questionId);
+    $stmt->execute();
+    $stmt->bind_result($qid, $qtext, $qlat, $qlng, $correctAnswer);
+    if ($stmt->fetch()) {
+        $questionRow = [
+            'id' => $qid,
+            'question_text' => $qtext,
+            'location_lat' => $qlat,
+            'location_lng' => $qlng
+        ];
+        $currentCorrectAnswer = $correctAnswer;
+        if (strcasecmp($submittedAnswer, $correctAnswer) !== 0) {
+            $wrongAnswer = true;
+            $showSuccess = false;
+        } else {
+            // Správná odpověď - přidej bod a přesměruj na novou otázku
+            $_SESSION['correct_answers']++;
+            header("Location: game.php?success=1");
+            exit;
+        }
+    }
+    $stmt->close();
+} else {
+    // Fetch a random question with location
+    $sql = "SELECT id, question_text, location_lat, location_lng, correct_answer FROM questions ORDER BY RAND() LIMIT 1";
+    $result = $conn->query($sql);
+    if ($row = $result->fetch_assoc()) {
+        $questionRow = $row;
+        $currentCorrectAnswer = $row['correct_answer'];
+    }
+}
+
+if ($questionRow) {
     // Pokud je požadavek AJAX (např. fetch), vrať JSON
     if (
         isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
@@ -19,20 +69,23 @@ if ($row = $result->fetch_assoc()) {
     ) {
         header('Content-Type: application/json');
         echo json_encode([
-            'id' => $row['id'],
-            'question' => $row['question_text'],
+            'id' => $questionRow['id'],
+            'question' => $questionRow['question_text'],
             // 'allowed_distance' => 50, // Zakomentováno dle požadavku
-            'latitude' => floatval($row['location_lat']),
-            'longitude' => floatval($row['location_lng'])
+            'latitude' => floatval($questionRow['location_lat']),
+            'longitude' => floatval($questionRow['location_lng'])
         ]);
     } else {
-        // Jinak vypiš HTML
+        // Pokud je v URL success=1, zobraz overlay
+        $showSuccess = isset($_GET['success']) && $_GET['success'] == '1';
         ?>
         <!DOCTYPE html>
         <html lang="cs">
         <head>
             <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Otázka</title>
+            <link rel="stylesheet" href="css/nav.css">
             <style>
                 #question-container {
                     max-width: 500px;
@@ -54,17 +107,204 @@ if ($row = $result->fetch_assoc()) {
                 #answer-btn {
                     padding: 8px 16px;
                 }
+                .wrong-answer-msg {
+                    color: #d32f2f;
+                    margin-top: 8px;
+                    font-weight: bold;
+                }
+                .success-overlay {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(46, 204, 113, 0.97);
+                    color: #fff;
+                    font-size: 3em;
+                    font-weight: bold;
+                    z-index: 9999;
+                    transition: opacity 0.3s;
+                    cursor: pointer;
+                    font-family: 'Segoe UI', 'Roboto', 'Arial', 'Helvetica Neue', sans-serif;
+                    letter-spacing: 2px;
+                }
+                .show-answer-btn {
+                    margin-top: 12px;
+                    padding: 6px 16px;
+                    background: #2980d9;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 1em;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                }
+                .show-answer-btn:hover {
+                    background: #1c5fa8;
+                }
+                .correct-answer-msg {
+                    margin-top: 10px;
+                    color: #388e3c;
+                    font-weight: bold;
+                    background: #e8f5e9;
+                    padding: 8px 12px;
+                    border-radius: 5px;
+                    display: inline-block;
+                }
+                .status-panel {
+                    margin-top:30px;
+                    padding:16px;
+                    background:#e8f5e9;
+                    border-radius:8px;
+                    text-align:center;
+                    font-size:1.1em;
+                }
+                .nav-toggle-btn {
+                    position: fixed;
+                    top: 10px;
+                    left: 10px;
+                    z-index: 1000;
+                    background: transparent;
+                    border: none;
+                    cursor: pointer;
+                }
+                .nav-toggle-btn span {
+                    display: block;
+                    width: 30px;
+                    height: 3px;
+                    background: #333;
+                    margin: 5px 0;
+                }
+                .nav-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 999;
+                    display: none;
+                }
+                .nav-overlay.active {
+                    display: block;
+                }
+                .nav-open {
+                    transform: translateX(0);
+                }
+                .nav-open-btn, .nav-close-btn {
+                    background: #229954;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 1.1em;
+                    padding: 8px 18px;
+                    margin: 8px 0;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                }
+                .nav-open-btn:hover, .nav-close-btn:hover {
+                    background: #28b463;
+                }
+                .nav-close-btn {
+                    width: 100%;
+                    margin-top: 10px;
+                }
+                @media screen and (max-width: 768px) {
+                    .nav-open-btn {
+                        display: block;
+                        position: fixed;
+                        top: 12px;
+                        left: 12px;
+                        z-index: 1200;
+                    }
+                    .index-nav {
+                        /* ...existing code... */
+                    }
+                    .nav-close-btn {
+                        display: block;
+                    }
+                }
             </style>
         </head>
         <body>
-            <div id="question-container">
-                <div id="question-text"><?php echo htmlspecialchars($row['question_text']); ?></div>
+        <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
+            Otevřít menu
+        </button>
+        <div class="nav-overlay" id="navOverlay"></div>
+        <nav class="index-nav" id="mainNav" style="display:none;">
+            <ul>
+                <li><a href="index.php" class="nav-link">Domů</a></li>
+                <li><a href="game.php" class="nav-link">Hrát</a></li>
+                <li><a href="login.php" class="nav-link">Přihlášení</a></li>
+                <li><a href="register.php" class="nav-link">Registrace</a></li>
+                <li><a href="rules.php" class="nav-link">Pravidla</a></li>
+                <li><a href="about.php" class="nav-link">O nás</a></li>
+                <li><button type="button" class="nav-close-btn" id="navCloseBtn">Zavřít</button></li>
+            </ul>
+        </nav>
+        <div id="question-container">
+            <div id="question-text"><?php echo htmlspecialchars($questionRow['question_text']); ?></div>
                 <form method="post">
-                    <input type="hidden" name="question_id" value="<?php echo $row['id']; ?>">
+                    <input type="hidden" name="question_id" value="<?php echo $questionRow['id']; ?>">
                     <input type="text" id="answer-input" name="answer" placeholder="Zadejte odpověď">
                     <button id="answer-btn" type="submit">Potvrdit</button>
+                    <?php if ($wrongAnswer): ?>
+                        <div class="wrong-answer-msg">Špatná odpověď</div>
+                    <?php endif; ?>
                 </form>
+                <button class="show-answer-btn" type="button" onclick="showCorrectAnswer()">Zobrazit správnou odpověď</button>
+                <div id="correct-answer" style="display:none;">
+                    <span class="correct-answer-msg"><?php echo htmlspecialchars($currentCorrectAnswer); ?></span>
+                </div>
+                <script>
+                    function showCorrectAnswer() {
+                        document.getElementById('correct-answer').style.display = 'block';
+                    }
+                </script>
+                <!-- Stavový panel -->
+                <div class="status-panel">
+                    <strong>Správně zodpovězeno:</strong> <?php echo $_SESSION['correct_answers']; ?> /
+                    <strong>Zbývá:</strong> <?php echo max(0, $totalQuestions - $_SESSION['correct_answers']); ?>
+                </div>
             </div>
+            <script>
+                // Hamburger menu logika
+                const nav = document.getElementById('mainNav');
+                const overlay = document.getElementById('navOverlay');
+                const navOpenBtn = document.getElementById('navOpenBtn');
+                const navCloseBtn = document.getElementById('navCloseBtn');
+
+                function openNav() {
+                    nav.style.display = 'block';
+                    overlay.classList.add('active');
+                    navOpenBtn.style.display = 'none';
+                }
+                function closeNav() {
+                    nav.style.display = 'none';
+                    overlay.classList.remove('active');
+                    navOpenBtn.style.display = 'block';
+                }
+
+                navOpenBtn.addEventListener('click', openNav);
+                navCloseBtn.addEventListener('click', closeNav);
+                overlay.addEventListener('click', closeNav);
+
+                // Otevřené menu na desktopu, zavřené na mobilu
+                function handleResize() {
+                    if (window.innerWidth <= 768) {
+                        closeNav();
+                    } else {
+                        nav.style.display = 'block';
+                        overlay.classList.remove('active');
+                        navOpenBtn.style.display = 'none';
+                    }
+                }
+                handleResize();
+                window.addEventListener('resize', handleResize);
+            </script>
         </body>
         </html>
         <?php

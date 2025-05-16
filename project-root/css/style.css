@@ -10,6 +10,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4; /* Jemná barva pozadí */
     color: #333; /* Decentní barva textu */
+    padding-top: 56px; /* Přidáno pro odsazení pod navigací */
 }
 
 /* Přidáme wrapper pro registrační stránku */
@@ -332,6 +333,7 @@ input#register-submit:hover {
     body {
         padding: 10px;
         background-size: contain; /* Na mobilních zařízeních obrázek se přizpůsobí */
+        padding-top: 44px; /* Menší padding na mobilu */
     }
 
     form.register-form {

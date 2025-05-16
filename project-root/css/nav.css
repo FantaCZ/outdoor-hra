@@ -9,10 +9,18 @@ html, body {
     background: linear-gradient(90deg, #28b463, #229954);
     padding: 7px 0;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Opraveno */
+    position: fixed;
     top: 0;
-    width: 100%;     /* Přidáno pro správné roztažení */
+    left: 0;
+    width: 100%;
     z-index: 1000;
+    margin-bottom: 0;
+}
+
+/* Přidejte tuto třídu pro odsazení obsahu pod navigací */
+.nav-spacer {
+    height: 44px; /* výška navigace, upravte dle potřeby */
+    display: block;
 }
 
 .index-nav ul {
@@ -96,14 +104,90 @@ html, body {
     left: 0;
 }
 
+.nav-toggle-btn {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    z-index: 1101;
+    cursor: pointer;
+    width: 48px;      /* zvětšeno */
+    height: 48px;     /* zvětšeno */
+    padding: 0;
+}
+
+.nav-toggle-btn span,
+.nav-toggle-btn span:before,
+.nav-toggle-btn span:after {
+    display: block;
+    position: absolute;
+    width: 36px;      /* zvětšeno */
+    height: 5px;      /* zvětšeno */
+    background: #fff;
+    border-radius: 3px;
+    transition: 0.3s;
+    content: '';
+}
+
+.nav-toggle-btn span {
+    top: 22px;        /* upraveno pro větší tlačítko */
+    left: 6px;
+}
+
+.nav-toggle-btn span:before {
+    content: '';
+    top: -12px;       /* upraveno pro větší tlačítko */
+    left: 0;
+    position: absolute;
+}
+
+.nav-toggle-btn span:after {
+    content: '';
+    top: 12px;        /* upraveno pro větší tlačítko */
+    left: 0;
+    position: absolute;
+}
+
+.nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+}
+
+.nav-open-btn, .nav-close-btn {
+    background: #229954;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    padding: 8px 18px;
+    margin: 8px 0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.nav-open-btn:hover, .nav-close-btn:hover {
+    background: #28b463;
+}
+
+.nav-close-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
 @media screen and (max-width: 768px) {
     .index-nav {
         position: fixed; /* Navigace zůstane pevná */
         top: 0;
-        width: 100%; /* Zajistí, že navigace pokryje celou šířku */
+        width: 100%;
         z-index: 1000; /* Navigace bude nad ostatními prvky */
         padding: 4px 0; /* ještě menší výška na mobilu */
         background: linear-gradient(90deg, #28b463, #229954); /* Přidání pozadí pro viditelnost */
+        margin-bottom: 0;
     }
 
     .index-nav ul {
@@ -114,7 +198,17 @@ html, body {
         box-sizing: border-box;
         transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
         overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .index-nav.nav-open ul {
         max-height: 500px;
+        opacity: 1;
+        pointer-events: auto;
+        background: linear-gradient(90deg, #28b463, #229954);
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
     }
 
     .index-nav ul li,
@@ -134,11 +228,73 @@ html, body {
         display: block;
     }
 
+    .nav-toggle-btn {
+        display: block;
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        background: none;
+        border: none;
+        z-index: 1101;
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        padding: 0;
+    }
+    .nav-toggle-btn span,
+    .nav-toggle-btn span:before,
+    .nav-toggle-btn span:after {
+        display: block;
+        position: absolute;
+        width: 36px;
+        height: 5px;
+        background: #fff;
+        border-radius: 3px;
+        transition: 0.3s;
+        content: '';
+    }
+    .nav-toggle-btn span {
+        top: 22px;
+        left: 6px;
+    }
+    .nav-toggle-btn span:before {
+        content: '';
+        top: -12px;
+        left: 0;
+        position: absolute;
+    }
+    .nav-toggle-btn span:after {
+        content: '';
+        top: 12px;
+        left: 0;
+        position: absolute;
+    }
+
+    .nav-open-btn {
+        display: block;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 1200;
+    }
+
+    .nav-close-btn {
+        display: block;
+    }
+
+    .nav-overlay.active {
+        display: block;
+    }
+
     .index-nav.nav-collapsed ul {
         max-height: 0;
         padding: 0;
         margin: 0;
         opacity: 0;
         pointer-events: none;
+    }
+
+    .nav-spacer {
+        display: none;
     }
 }
