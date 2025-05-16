@@ -116,39 +116,45 @@ input#register-submit:hover {
 }
 
 /* Styl pro formulář přihlášení */
-.login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+form.login-form {
+    background-color: white;
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    display: block;
 }
 
-.login-form label {
+form.login-form label {
     font-weight: bold;
     color: #333;
 }
 
-.login-form input[type="text"],
-.login-form input[type="password"] {
+form.login-form input[type="text"],
+form.login-form input[type="password"] {
     width: 100%;
     padding: 10px;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
 }
 
-.login-form input[type="submit"] {
+form.login-form input[type="submit"] {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1.1em;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
-.login-form input[type="submit"]:hover {
+form.login-form input[type="submit"]:hover {
     background-color: #45a049;
 }
 

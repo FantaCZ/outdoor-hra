@@ -91,22 +91,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </ul>
 </nav>
 <br><br>
-<h2>Přihlášení</h2>
-<?php
-if (isset($error_message)) {
-    echo "<p class='error'>$error_message</p>";
-}
-?>
-<form action="login.php" method="POST" class="login-form">
-    <label for="username">Uživatelské jméno:</label>
-    <input type="text" id="username" name="username" required><br><br>
+<div class="register-wrapper" style="min-height:100vh;display:block;">
+    <div class="login-container" style="margin:40px auto 0 auto;">
+        <h2 class="register-heading">Přihlášení</h2>
+        <?php
+        if (isset($error_message)) {
+            echo "<p class='error'>$error_message</p>";
+        }
+        ?>
+        <form action="login.php" method="POST" class="login-form">
+            <label for="username">Uživatelské jméno:</label>
+            <input type="text" id="username" name="username" required><br><br>
 
-    <label for="password">Heslo:</label>
-    <input type="password" id="password" name="password" required><br><br>
+            <label for="password">Heslo:</label>
+            <input type="password" id="password" name="password" required><br><br>
 
-    <input type="submit" value="Přihlásit se">
-</form>
-<p>Nemáte účet? <a href="register.php">Registrujte se zde</a></p>
+            <input type="submit" value="Přihlásit se">
+        </form>
+        <p>Nemáte účet? <a href="register.php">Registrujte se zde</a></p>
+    </div>
+</div>
 <script>
     const nav = document.getElementById('mainNav');
     const overlay = document.getElementById('navOverlay');
