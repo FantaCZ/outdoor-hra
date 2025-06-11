@@ -239,7 +239,7 @@ if ($questionRow) {
                         z-index: 1200;
                     }
                     .index-nav {
-                        /* ...existing code... */
+                      
                     }
                     .nav-close-btn {
                         display: block;
