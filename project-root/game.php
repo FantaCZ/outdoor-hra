@@ -28,21 +28,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $submittedAnswer = isset($_POST['answer']) ? trim($_POST['answer']) : '';
     $questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
     // Získat otázku a správnou odpověď podle ID
-    $stmt = $conn->prepare("SELECT id, question_text, location_lat, location_lng, correct_answer FROM questions WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions WHERE id = ?");
     $stmt->bind_param("i", $questionId);
     $stmt->execute();
-    $stmt->bind_result($qid, $qtext, $qlat, $qlng, $correctAnswer);
+    $stmt->bind_result($qid, $qtext, $qlat, $qlng, $correctAnswer, $imagePath);
     if ($stmt->fetch()) {
         $questionRow = [
             'id' => $qid,
             'question_text' => $qtext,
             'location_lat' => $qlat,
-            'location_lng' => $qlng
+            'location_lng' => $qlng,
+            'image_path' => $imagePath
         ];
         $currentCorrectAnswer = $correctAnswer;
         if (strcasecmp($submittedAnswer, $correctAnswer) !== 0) {
             $wrongAnswer = true;
             $showSuccess = false;
+            // Prevent moving to the next question
+            // header("Location: game.php?success=0");
+            // exit;
         } else {
             // Správná odpověď - přidej bod a přesměruj na novou otázku
             $_SESSION['correct_answers']++;
@@ -53,12 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 } else {
     // Fetch a random question with location
-    $sql = "SELECT id, question_text, location_lat, location_lng, correct_answer FROM questions ORDER BY RAND() LIMIT 1";
+    $sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions ORDER BY RAND() LIMIT 1";
     $result = $conn->query($sql);
     if ($row = $result->fetch_assoc()) {
         $questionRow = $row;
         $currentCorrectAnswer = $row['correct_answer'];
     }
+}
+
+$imagePath = null;
+if ($questionRow && isset($questionRow['image_path'])) {
+    // Use the image_path column from the questions table
+    $imagePath = $questionRow['image_path'];
 }
 
 if ($questionRow) {
@@ -87,6 +97,14 @@ if ($questionRow) {
             <title>Otázka</title>
             <link rel="stylesheet" href="css/nav.css">
             <style>
+                        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('assets/gametheme.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
                 #question-container {
                     max-width: 500px;
                     margin: 40px auto;
@@ -245,6 +263,11 @@ if ($questionRow) {
                 <li><button type="button" class="nav-close-btn" id="navCloseBtn">Zavřít</button></li>
             </ul>
         </nav>
+        <?php if ($imagePath): ?>
+            <div id="question-image-container" style="text-align:center; margin-bottom:20px;">
+                <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Question Image" style="width:100%; max-width:500px; height:auto; border-radius:8px;">
+            </div>
+        <?php endif; ?>
         <div id="question-container">
             <div id="question-text"><?php echo htmlspecialchars($questionRow['question_text']); ?></div>
                 <form method="post">
@@ -270,6 +293,14 @@ if ($questionRow) {
                     <strong>Zbývá:</strong> <?php echo max(0, $totalQuestions - $_SESSION['correct_answers']); ?>
                 </div>
             </div>
+
+            <!-- Kompas -->
+<div id="compass-container" style="text-align: center; margin: 40px auto; padding: 20px; border: 2px solid #ccc; border-radius: 10px; background: #f9f9f9; max-width: 200px;">
+    <h3 style="margin-bottom: 10px; font-size: 1.2em; color: #333;">Kompas</h3>
+    <div id="compass" style="position: relative; width: 150px; height: 150px; margin: 0 auto;">
+        <img id="compass-image" src="assets/kompas.png" alt="Kompas" style="width: 100%; height: auto; border-radius: 50%; transform-origin: center; transform: rotate(0deg);">
+    </div>
+</div>
             <script>
                 // Hamburger menu logika
                 const nav = document.getElementById('mainNav');
@@ -304,6 +335,61 @@ if ($questionRow) {
                 }
                 handleResize();
                 window.addEventListener('resize', handleResize);
+
+                    // Souřadnice otázky
+    const questionLat = <?php echo floatval($questionRow['location_lat']); ?>;
+    const questionLng = <?php echo floatval($questionRow['location_lng']); ?>;
+
+    // Element obrázku kompasu
+    const compassImage = document.getElementById('compass-image');
+
+    // Funkce pro výpočet azimutu mezi dvěma body
+    function calculateBearing(lat1, lng1, lat2, lng2) {
+        const toRadians = (deg) => deg * (Math.PI / 180);
+        const toDegrees = (rad) => rad * (180 / Math.PI);
+
+        const dLng = toRadians(lng2 - lng1);
+        const y = Math.sin(dLng) * Math.cos(toRadians(lat2));
+        const x = Math.cos(toRadians(lat1)) * Math.sin(toRadians(lat2)) -
+                  Math.sin(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.cos(dLng);
+        return (toDegrees(Math.atan2(y, x)) + 360) % 360;
+    }
+
+    // Funkce pro aktualizaci směru kompasu
+    function updateCompass(userLat, userLng) {
+        const bearing = calculateBearing(userLat, userLng, questionLat, questionLng);
+        compassImage.style.transform = `rotate(${bearing}deg)`;
+    }
+
+    // Získání polohy uživatele
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                updateCompass(userLat, userLng);
+            },
+            (error) => {
+                console.error('Chyba geolokace:', error);
+            },
+            { enableHighAccuracy: true }
+        );
+    } else {
+        alert('Geolokace není podporována vaším prohlížečem.');
+    }
+
+    // Funkce pro aktualizaci směru kompasu na základě orientace zařízení
+    function updateCompassRotation(event) {
+        const alpha = event.alpha; // Úhel rotace zařízení kolem jeho vertikální osy
+        compassImage.style.transform = `rotate(${360 - alpha}deg)`;
+    }
+
+    // Kontrola podpory DeviceOrientationEvent
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', updateCompassRotation, true);
+    } else {
+        alert('Vaše zařízení nepodporuje orientaci zařízení.');
+    }
             </script>
         </body>
         </html>
@@ -314,4 +400,34 @@ if ($questionRow) {
     echo json_encode(['error' => 'No question found']);
 }
 
+// Fetch all questions from the database
+$questionsResult = $conn->query("SELECT id, question_text FROM questions");
+?>
+<div style="margin: 40px auto; max-width: 600px; text-align: center;">
+    <h2>Výběr otázky</h2>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Text otázky</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($question = $questionsResult->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($question['id']); ?></td>
+                    <td><?php echo htmlspecialchars($question['question_text']); ?></td>
+                    <td>
+                        <form method="post" style="margin: 0;">
+                            <input type="hidden" name="question_id" value="<?php echo $question['id']; ?>">
+                            <button type="submit">Vybrat</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+</div>
+<?php
 $conn->close();

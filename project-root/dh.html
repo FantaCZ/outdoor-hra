@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compass</title>
+    <style>
+        #compass {
+            width: 200px;
+            height: 200px;
+            border: 2px solid black;
+            border-radius: 50%;
+            position: relative;
+            margin: 20px auto;
+        }
+        #needle {
+            width: 2px;
+            height: 100px;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+        .direction {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .north { top: 5px; left: 50%; transform: translateX(-50%); }
+        .east { top: 50%; right: 5px; transform: translateY(-50%); }
+        .south { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .west { top: 50%; left: 5px; transform: translateY(-50%); }
+        #bearing-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #error-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: red;
+        }
+        #instructions {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div id="compass">
+        <div id="needle"></div>
+        <div class="direction north">N</div>
+        <div class="direction east">E</div>
+        <div class="direction south">S</div>
+        <div class="direction west">W</div>
+    </div>
+    <div id="bearing-info">Bearing: 0° (North)</div>
+    <div id="error-message"></div>
+    <div id="instructions" style="display: none;">
+        Please enable location services in your browser settings or grant location access to this app.
+    </div>
+    <script>
+        const targetCoordinates = { lat: 50.0829414, lon: 14.4127544 };
+
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const toRadians = (deg) => deg * (Math.PI / 180);
+            const toDegrees = (rad) => rad * (180 / Math.PI);
+
+            const dLon = toRadians(lon2 - lon1);
+            const y = Math.sin(dLon) * Math.cos(toRadians(lat2));
+            const x = Math.cos(toRadians(lat1)) * Math.sin(toRadians(lat2)) -
+                      Math.sin(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.cos(dLon);
+            const bearing = (toDegrees(Math.atan2(y, x)) + 360) % 360;
+            console.log(`Calculated Bearing: ${bearing}`); // Debugging
+            return bearing;
+        }
+
+        function getDirection(bearing) {
+            if (bearing >= 337.5 || bearing < 22.5) return "North";
+            if (bearing >= 22.5 && bearing < 67.5) return "Northeast";
+            if (bearing >= 67.5 && bearing < 112.5) return "East";
+            if (bearing >= 112.5 && bearing < 157.5) return "Southeast";
+            if (bearing >= 157.5 && bearing < 202.5) return "South";
+            if (bearing >= 202.5 && bearing < 247.5) return "Southwest";
+            if (bearing >= 247.5 && bearing < 292.5) return "West";
+            if (bearing >= 292.5 && bearing < 337.5) return "Northwest";
+        }
+
+        function updateCompass() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userCoordinates = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        };
+                        console.log(`User Coordinates: ${JSON.stringify(userCoordinates)}`); // Debugging
+
+                        const bearing = calculateBearing(
+                            userCoordinates.lat,
+                            userCoordinates.lon,
+                            targetCoordinates.lat,
+                            targetCoordinates.lon
+                        );
+                        const direction = getDirection(bearing);
+                        console.log(`Direction: ${direction}`); // Debugging
+
+                        document.getElementById('needle').style.transform = `translate(-50%, -50%) rotate(${bearing}deg)`;
+                        document.getElementById('bearing-info').textContent = `Bearing: ${bearing.toFixed(1)}° (${direction})`;
+                        document.getElementById('error-message').textContent = ""; // Clear error message
+                    },
+                    (error) => {
+                        console.error("Geolocation error:", error);
+                        document.getElementById('error-message').textContent = "Unable to fetch location. Please enable location services.";
+                        document.getElementById('instructions').style.display = "block";
+                    }
+                );
+            } else {
+                document.getElementById('error-message').textContent = "Geolocation is not supported by your browser.";
+                document.getElementById('instructions').style.display = "block";
+            }
+        }
+
+        setInterval(() => {
+            updateCompass(); // Always update compass
+        }, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>

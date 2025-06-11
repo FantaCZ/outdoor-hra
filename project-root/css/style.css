@@ -264,6 +264,7 @@ form.login-form input[type="submit"]:hover {
 .photo-gallery {
     text-align: center;
     padding: 20px;
+    margin-top: 20px;
 }
 
 .photo-gallery .photos {
@@ -353,6 +354,42 @@ form.login-form input[type="submit"]:hover {
     input#register-submit {
         font-size: 1em;
     }
+}
+
+/* Styl pro centrální obsah na index stránce */
+.index-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers vertically */
+    align-items: center; /* Centers horizontally */
+    min-height: 100vh; /* Full viewport height */
+    width: 100%; /* Full width */
+    text-align: center;
+}
+
+.index-wrapper h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.index-wrapper p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+}
+
+.text-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    text-align: center;
+}
+
+.photo-gallery h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
 }
 
 

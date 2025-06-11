@@ -5,32 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hlavní stránka</title>
     <link rel="stylesheet" href="css/nav.css">
-    <link rel="stylesheet" href="css/style.css"> <!-- Přidání odkazu na styl -->
-    <style>
-        .nav-open-btn, .nav-close-btn {
-            background: #229954;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            padding: 8px 18px;
-            margin: 8px 0;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-family: 'Segoe UI', 'Roboto', 'Arial', 'Helvetica Neue', sans-serif;
-            letter-spacing: 2px;
-        }
-        .nav-open-btn:hover, .nav-close-btn:hover {
-            background: #28b463;
-        }
-        .nav-close-btn {
-            width: 100%;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css"> <!-- Ensure this link is correct -->
 </head>
 <body class="index-page">
-
     <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
         Otevřít menu
     </button>
@@ -47,8 +24,10 @@
         </ul>
     </nav>
 
-    <h1>Vítejte v pražském escape roomu!</h1>
-    <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více o nás.</p>
+    <div class="index-wrapper">
+        <h1>Vítejte v pražském escape roomu!</h1>
+        <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více o nás.</p>
+    </div>
 
     <!-- Fotky -->
     <section class="photo-gallery">
@@ -98,6 +77,5 @@
         handleResize();
         window.addEventListener('resize', handleResize);
     </script>
-
 </body>
 </html>
