@@ -52,29 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     $stmt->close();
-} else {
-    // Fetch a random question with location
-    $sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions ORDER BY RAND() LIMIT 1";
-    $result = $conn->query($sql);
-    if ($row = $result->fetch_assoc()) {
-        $questionRow = $row;
-        $currentCorrectAnswer = $row['correct_answer'];
-    }
-}
-
-$imagePath = null;
-if ($questionRow && isset($questionRow['image_path'])) {
-    // Use the image_path column from the questions table
-    $imagePath = $questionRow['image_path'];
 }
 
 // Fetch all questions with coordinates from the database
 $questions = [];
-$sql = "SELECT id, question_text, location_lat, location_lng FROM questions";
+$sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions";
 $result = $conn->query($sql);
 while ($row = $result->fetch_assoc()) {
     $questions[] = $row;
 }
+
+// Pass all questions to JavaScript for proximity calculation
 ?>
 <!DOCTYPE html>
 <html lang="cs">
@@ -103,116 +91,159 @@ while ($row = $result->fetch_assoc()) {
 </head>
 <body>
 <div id="map-container"></div>
-<button id="center-user-btn" style="position: absolute; top: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Centruj na mou polohu</button>
-<button id="reset-map-btn" style="position: absolute; top: 60px; right: 20px; z-index: 1000; padding: 10px 20px; background: #f39c12; color: white; border: none; border-radius: 5px; cursor: pointer;">Resetovat mapu</button>
+<div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+    <button id="center-user-btn" style="padding: 10px 20px; background: #2980d9; color: white; border: none; border-radius: 5px; cursor: pointer;">Centruj na mou polohu</button>
+    <button id="reset-map-btn" style="padding: 10px 20px; background: #d32f2f; color: white; border: none; border-radius: 5px; cursor: pointer;">Resetovat mapu</button>
+</div>
 <script>
-    const defaultCenter = [50.09297860, 14.40108390]; // Default center coordinates
-    const defaultZoom = 14; // Default zoom level
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultCenter = [50.09297860, 14.40108390]; // Default center coordinates
+        const defaultZoom = 14; // Default zoom level
 
-    // Center map on default view when button is clicked
-    document.getElementById('reset-map-btn').addEventListener('click', () => {
-        map.setView(defaultCenter, defaultZoom);
-    });
-
-    // Initialize the map
-    const map = L.map('map-container').setView(defaultCenter, defaultZoom); // Default center and zoom level
-
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
-    // Add markers for questions (red markers)
-    const questions = <?php echo json_encode($questions); ?>;
-    const redIcon = L.icon({
-        iconUrl: 'assets/maps/red-icon.png', // Correct path to the red icon
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34]
-    });
-    questions.forEach(question => {
-        const marker = L.marker([question.location_lat, question.location_lng], { icon: redIcon }).addTo(map);
-        marker.bindPopup(`<strong>Otázka:</strong> ${question.question_text}`);
-    });
-
-    // Add user's location marker (custom blue icon)
-    const blueIcon = L.icon({
-        iconUrl: 'assets/maps/blue-icon.png', // Correct path to the blue icon
-        iconSize: [30, 40], // Adjust size as needed
-        iconAnchor: [15, 40], // Adjust anchor point
-        popupAnchor: [0, -30] // Adjust popup position
-    });
-    let userLat, userLng;
-    let userCircle; // Variable to store the circle
-
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-            (position) => {
-                userLat = position.coords.latitude;
-                userLng = position.coords.longitude;
-
-                // Add or update the user's location marker
-                if (window.userMarker) {
-                    window.userMarker.setLatLng([userLat, userLng]);
-                } else {
-                    window.userMarker = L.marker([userLat, userLng], { icon: blueIcon }).addTo(map);
-                    window.userMarker.bindPopup('<strong>Vaše poloha</strong>').openPopup();
-                }
-
-                // Add or update the circle around the user's location
-                if (userCircle) {
-                    userCircle.setLatLng([userLat, userLng]); // Ensure the circle is centered on the marker
-                } else {
-                    userCircle = L.circle([userLat, userLng], {
-                        radius: 20, // Radius in meters
-                        color: '#4CAF50',
-                        fillColor: '#4CAF50',
-                        fillOpacity: 0.2
-                    }).addTo(map);
-                }
-            },
-            (error) => {
-                console.error('Chyba geolokace:', error);
-            },
-            { enableHighAccuracy: true }
+        // Define map boundaries
+        const bounds = L.latLngBounds(
+            [50.05, 14.35], // Southwest corner
+            [50.15, 14.45]  // Northeast corner
         );
-    } else {
-        alert('Geolokace není podporována vaším prohlížečem.');
-    }
 
-    // Center map on user's location when button is clicked
-    document.getElementById('center-user-btn').addEventListener('click', () => {
-        if (userLat && userLng) {
-            map.setView([userLat, userLng], 19); // Zoom level set to 19 for extreme close-up
+        const map = L.map('map-container', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0
+        }).setView(defaultCenter, defaultZoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        const questions = <?php echo json_encode($questions); ?>;
+        const redIcon = L.icon({
+            iconUrl: 'assets/maps/red-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        questions.forEach(question => {
+            const marker = L.marker([question.location_lat, question.location_lng], { icon: redIcon }).addTo(map);
+            marker.bindPopup(`<strong>Otázka:</strong> ${question.question_text}`);
+        });
+
+        const blueIcon = L.icon({
+            iconUrl: 'assets/maps/blue-icon.png',
+            iconSize: [30, 40],
+            iconAnchor: [15, 40],
+            popupAnchor: [0, -30]
+        });
+
+        let userLat, userLng;
+        let userCircle;
+        const questionContainer = document.getElementById('question-container');
+        const questionText = document.getElementById('question-text');
+        const questionIdInput = document.querySelector('input[name="question_id"]');
+
+        // Debugging: Check if questionContainer exists
+        if (!questionContainer) {
+            console.error('Element with id "question-container" not found in the DOM.');
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // Distance in meters
+        }
+
+        function findClosestQuestion(userLat, userLng) {
+            let closestQuestion = null;
+            let minDistance = Infinity;
+
+            questions.forEach(question => {
+                const distance = calculateDistance(userLat, userLng, question.location_lat, question.location_lng);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestQuestion = question;
+                }
+            });
+
+            return { closestQuestion, minDistance };
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+
+                    // Update user's location marker
+                    if (window.userMarker) {
+                        window.userMarker.setLatLng([userLat, userLng]);
+                    } else {
+                        window.userMarker = L.marker([userLat, userLng], { icon: blueIcon }).addTo(map);
+                        window.userMarker.bindPopup('<strong>Vaše poloha</strong>').openPopup();
+                    }
+
+                    // Update or create the circle around the user's location
+                    if (userCircle) {
+                        userCircle.setLatLng([userLat, userLng]);
+                    } else {
+                        userCircle = L.circle([userLat, userLng], {
+                            radius: 20,
+                            color: '#4CAF50',
+                            fillColor: '#4CAF50',
+                            fillOpacity: 0.2
+                        }).addTo(map);
+                    }
+
+                    // Find the closest question
+                    const { closestQuestion, minDistance } = findClosestQuestion(userLat, userLng);
+                    console.log(`Closest question distance: ${minDistance} meters`);
+
+                    if (closestQuestion && minDistance <= 20) {
+                        if (questionContainer) {
+                            // Update the question container with the closest question
+                            questionContainer.style.display = 'block';
+                            questionText.innerText = closestQuestion.question_text;
+                            questionIdInput.value = closestQuestion.id;
+                        } else {
+                            console.error('Question container is not available.');
+                        }
+                    } else {
+                        if (questionContainer) {
+                            questionContainer.style.display = 'none';
+                        }
+                    }
+                },
+                (error) => {
+                    console.error('Chyba geolokace:', error);
+                },
+                { enableHighAccuracy: true }
+            );
         } else {
-            alert('Vaše poloha není dostupná.');
+            alert('Geolokace není podporována vaším prohlížečem.');
+        }
+
+        // Ensure the container is hidden by default
+        if (questionContainer) {
+            questionContainer.style.display = 'none';
         }
     });
 </script>
-<div id="question-container" style="max-width: 500px; margin: 40px auto; padding: 24px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9;">
-    <div id="question-text" style="font-size: 1.2em; margin-bottom: 16px;"><?php echo htmlspecialchars($questionRow['question_text']); ?></div>
+<div id="question-container" style="max-width: 500px; margin: 40px auto; padding: 24px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; display: none;">
+    <div id="question-text" style="font-size: 1.2em; margin-bottom: 16px;"></div>
     <form method="post">
-        <input type="hidden" name="question_id" value="<?php echo $questionRow['id']; ?>">
+        <input type="hidden" name="question_id" value="">
         <input type="text" id="answer-input" name="answer" placeholder="Zadejte odpověď" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
         <button id="answer-btn" type="submit" style="padding: 8px 16px;">Potvrdit</button>
-        <?php if ($wrongAnswer): ?>
-            <div class="wrong-answer-msg" style="color: #d32f2f; margin-top: 8px; font-weight: bold;">Špatná odpověď</div>
-        <?php endif; ?>
     </form>
-    <button class="show-answer-btn" type="button" onclick="showCorrectAnswer()" style="margin-top: 12px; padding: 6px 16px; background: #2980d9; color: #fff; border: none; border-radius: 5px; font-size: 1em; cursor: pointer; transition: background 0.2s;">Zobrazit správnou odpověď</button>
-    <div id="correct-answer" style="display:none;">
-        <span class="correct-answer-msg" style="margin-top: 10px; color: #388e3c; font-weight: bold; background: #e8f5e9; padding: 8px 12px; border-radius: 5px; display: inline-block;"><?php echo htmlspecialchars($currentCorrectAnswer); ?></span>
-    </div>
-    <script>
-        function showCorrectAnswer() {
-            document.getElementById('correct-answer').style.display = 'block';
-        }
-    </script>
-    <div class="status-panel" style="margin-top:30px; padding:16px; background:#e8f5e9; border-radius:8px; text-align:center; font-size:1.1em;">
-        <strong>Správně zodpovězeno:</strong> <?php echo $_SESSION['correct_answers']; ?> /
-        <strong>Zbývá:</strong> <?php echo max(0, $totalQuestions - $_SESSION['correct_answers']); ?>
-    </div>
 </div>
 </body>
 </html>
