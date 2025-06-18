@@ -85,12 +85,17 @@ while ($row = $result->fetch_assoc()) {
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        body {
+            background: url('assets/maps/logo.png') repeat;
+            background-size: 50px 50px; /* Small tile size */
+        }
         #map-container {
             width: 80%;
             height: 400px;
             margin: 20px auto;
             border: 1px solid #ccc;
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
