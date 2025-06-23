@@ -235,7 +235,122 @@ while ($row = $result->fetch_assoc()) {
         if (questionContainer) {
             questionContainer.style.display = 'none';
         }
+
+        // --- OPRAVA: Funkce pro tlačítka ---
+        document.getElementById('center-user-btn').addEventListener('click', function () {
+            if (window.userMarker) {
+                map.setView(window.userMarker.getLatLng(), 17, { animate: true });
+            } else {
+                // Pokud není známá poloha, zkusit získat polohu uživatele
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        map.setView([position.coords.latitude, position.coords.longitude], 17, { animate: true });
+                    });
+                }
+            }
+        });
+
+        document.getElementById('reset-map-btn').addEventListener('click', function () {
+            map.setView(defaultCenter, defaultZoom, { animate: true });
+        });
     });
+
+    // --- Časomíra ---
+    let timerInterval;
+    let elapsedSeconds = 0;
+
+    // Načti čas z localStorage, pokud existuje (pro případ obnovení stránky)
+    if (localStorage.getItem('game_timer')) {
+        elapsedSeconds = parseInt(localStorage.getItem('game_timer'), 10) || 0;
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            elapsedSeconds++;
+            localStorage.setItem('game_timer', elapsedSeconds);
+            updateTimerDisplay();
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function updateTimerDisplay() {
+        let minutes = Math.floor(elapsedSeconds / 60);
+        let seconds = elapsedSeconds % 60;
+        document.getElementById('timer').innerText =
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Přidej časomíru do stránky
+    const timerDiv = document.createElement('div');
+    timerDiv.id = 'timer';
+    timerDiv.style = 'position:fixed;top:10px;right:10px;background:#fff;padding:8px 16px;border-radius:8px;box-shadow:0 2px 8px #0002;font-size:1.5em;z-index:1000;font-weight:bold;color:#d32f2f;letter-spacing:1px;border:2px solid #d32f2f;';
+    document.body.appendChild(timerDiv);
+    updateTimerDisplay();
+    startTimer();
+
+    // --- Odeslání času do PHP po dokončení hry ---
+    function sendTimeToServer() {
+        fetch('save_progress.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ elapsed_seconds: elapsedSeconds })
+        });
+    }
+
+    // --- Zákaz zavření/obnovení stránky před dokončením hry ---
+    window.addEventListener('beforeunload', function (e) {
+        // Zjisti počet správných odpovědí z PHP proměnné
+        const correctAnswers = <?php echo (int)$_SESSION['correct_answers']; ?>;
+        const totalQuestions = <?php echo (int)$totalQuestions; ?>;
+        if (correctAnswers < totalQuestions) {
+            e.preventDefault();
+            e.returnValue = 'Hru nelze opustit, dokud nezodpovíte všechny otázky!';
+            return 'Hru nelze opustit, dokud nezodpovíte všechny otázky!';
+        } else {
+            // Po dokončení hry odešli čas na server
+            sendTimeToServer();
+            localStorage.removeItem('game_timer');
+        }
+    });
+
+    // Po odeslání odpovědi zkontroluj, zda je hra dokončena
+    document.querySelector('form').addEventListener('submit', function () {
+        const correctAnswers = <?php echo (int)$_SESSION['correct_answers']; ?>;
+        const totalQuestions = <?php echo (int)$totalQuestions; ?>;
+        if (correctAnswers + 1 >= totalQuestions) { // +1 protože odpověď se teprve zpracuje
+            stopTimer();
+            sendTimeToServer();
+            localStorage.removeItem('game_timer');
+        }
+    });
+
+    // --- Odeslání postupu do backendu ---
+    function sendProgress(userId, username, answeredCorrectly, elapsedTime) {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+        formData.append('username', username);
+        formData.append('answered_correctly', answeredCorrectly);
+        formData.append('completion_time', elapsedTime);
+
+        fetch('game_logic.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            // případně zobrazit potvrzení
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Chyba při ukládání progressu:', error);
+        });
+    }
+
+    // Příklad použití: zavolejte tuto funkci při dokončení úkolu/hry
+    // sendProgress(4, 'root', 1, '00:12:34'); // user_id, username, správně odpovězeno, čas
 </script>
 <div id="question-container" style="max-width: 500px; margin: 40px auto; padding: 24px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; display: none;">
     <div id="question-text" style="font-size: 1.2em; margin-bottom: 16px;"></div>
