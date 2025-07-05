@@ -21,22 +21,10 @@
     <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
         Otevřít menu
     </button>
-    <div class="nav-overlay" id="navOverlay"></div>
-    <nav class="index-nav" id="mainNav" style="display:none;">
-        <ul>
-            <li><a href="index.php" class="nav-link">Domů</a></li>
-            <li><a href="game.php" class="nav-link">Hrát</a></li>
-            <li><a href="login.php" class="nav-link">Přihlášení</a></li>
-            <li><a href="register.php" class="nav-link">Registrace</a></li>
-            <li><a href="rules.php" class="nav-link">Pravidla</a></li>
-            <li><a href="about.php" class="nav-link">O nás</a></li>
-            <li><button type="button" class="nav-close-btn" id="navCloseBtn">Zavřít</button></li>
-        </ul>
-    </nav>
-
+    <?php include 'navbar.php'; ?>
     <div class="index-wrapper">
         <h1>Rád bych vás přivítal ve hře</h1>
-        <h1 style="color: #145a32;">Únik z Pražské pasti</h1> 
+        <h1 style="color: #145a32;">Únik z Pražské pasti</h1>
         <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více <a href="about.php">o nás</a>.</p>
         <p>Pro spuštění hry se musíte <a href="login.php">přihlásit zde</a>.</p>
         <p>Pokud jste se přihlásili, můžete kliknout zde pro přesměrování na <a href="game1.php">samotnou hru</a>.</p>

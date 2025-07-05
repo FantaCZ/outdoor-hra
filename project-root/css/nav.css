@@ -9,7 +9,7 @@ html, body {
     background: linear-gradient(90deg, #28b463, #229954);
     padding: 7px 0;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     width: 100%;
@@ -181,7 +181,7 @@ html, body {
 
 @media screen and (max-width: 768px) {
     .index-nav {
-        position: fixed; /* Navigace zůstane pevná */
+        position: sticky; /* Navigace zůstane pevná */
         top: 0;
         width: 100%;
         z-index: 1000; /* Navigace bude nad ostatními prvky */

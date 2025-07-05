@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
-        
+
 
         // Pokud uživatel existuje, ověříme heslo
         if ($stmt->num_rows > 0) {
@@ -78,18 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
     Otevřít menu
 </button>
-<div class="nav-overlay" id="navOverlay"></div>
-<nav class="index-nav" id="mainNav" style="display:none;">
-    <ul>
-        <li><a href="index.php" class="nav-link">Domů</a></li>
-        <li><a href="game.php" class="nav-link">Hrát</a></li>
-        <li><a href="login.php" class="nav-link">Přihlášení</a></li>
-        <li><a href="register.php" class="nav-link">Registrace</a></li>
-        <li><a href="rules.php" class="nav-link">Pravidla</a></li>
-        <li><a href="about.php" class="nav-link">O nás</a></li>
-        <li><button type="button" class="nav-close-btn" id="navCloseBtn">Zavřít</button></li>
-    </ul>
-</nav>
+<?php include 'navbar.php'; ?>
 <br><br>
 <div class="register-wrapper" style="min-height:100vh;display:block;">
     <div class="login-container" style="margin:40px auto 0 auto;">
