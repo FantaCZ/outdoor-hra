@@ -6,6 +6,16 @@
     <title>Hlavní stránka</title>
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/style.css"> <!-- Ensure this link is correct -->
+    <style>
+        /* Přidej styl pro fialové odkazy v index-wrapper */
+        .index-wrapper a {
+            color: #800080;
+            text-decoration: underline;
+        }
+        .index-wrapper a:hover {
+            color: #a020f0;
+        }
+    </style>
 </head>
 <body class="index-page">
     <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
@@ -25,8 +35,11 @@
     </nav>
 
     <div class="index-wrapper">
-        <h1>Vítejte v pražském escape roomu!</h1>
-        <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více o nás.</p>
+        <h1>Rád bych vás přivítal ve hře</h1>
+        <h1 style="color: #145a32;">Únik z Pražské pasti</h1> 
+        <p>Pro více informací si můžete prohlédnout naše pravidla nebo se dozvědět více <a href="about.php">o nás</a>.</p>
+        <p>Pro spuštění hry se musíte <a href="login.php">přihlásit zde</a>.</p>
+        <p>Pokud jste se přihlásili, můžete kliknout zde pro přesměrování na <a href="game1.php">samotnou hru</a>.</p>
     </div>
 
     <!-- Fotky -->

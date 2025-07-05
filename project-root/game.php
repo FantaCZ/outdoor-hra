@@ -238,9 +238,7 @@ if ($questionRow) {
                         left: 12px;
                         z-index: 1200;
                     }
-                    .index-nav {
-                      
-                    }
+                   
                     .nav-close-btn {
                         display: block;
                     }
