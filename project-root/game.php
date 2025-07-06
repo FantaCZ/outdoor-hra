@@ -245,9 +245,6 @@ if ($questionRow) {
             </style>
         </head>
         <body>
-        <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
-            Otevřít menu
-        </button>
         <?php include 'navbar.php'; ?>
         <?php if ($imagePath): ?>
             <div id="question-image-container" style="text-align:center; margin-bottom:20px;">

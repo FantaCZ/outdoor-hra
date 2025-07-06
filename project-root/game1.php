@@ -56,7 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch all questions with coordinates from the database
 $questions = [];
-$sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions";
+$sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path 
+        FROM questions 
+        ORDER BY RAND() 
+        LIMIT 10";
 $result = $conn->query($sql);
 while ($row = $result->fetch_assoc()) {
     $questions[] = $row;

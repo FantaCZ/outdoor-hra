@@ -71,9 +71,6 @@
     </style>
 </head>
 <body>
-    <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
-        Otevřít menu
-    </button>
     <?php include 'navbar.php'; ?>
     <section class="rules-section">
         <h1>Pravidla hry</h1>

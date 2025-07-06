@@ -31,9 +31,6 @@
     </style>
 </head>
 <body class="about-page">
-    <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
-        Otevřít menu
-    </button>
     <?php include 'navbar.php'; ?>
     <section class="about-section">
         <h2>O mně</h2>

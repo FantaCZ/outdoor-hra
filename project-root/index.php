@@ -18,9 +18,6 @@
     </style>
 </head>
 <body class="index-page">
-    <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
-        Otevřít menu
-    </button>
     <?php include 'navbar.php'; ?>
     <div class="index-wrapper">
         <h1>Rád bych vás přivítal ve hře</h1>

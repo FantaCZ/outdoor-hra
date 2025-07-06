@@ -6,6 +6,10 @@
         <title>navbar</title>
     </head>
     <body>
+        <button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
+            Otevřít menu
+        </button>
+
         <div class="nav-overlay" id="navOverlay"></div>
 
         <nav class="index-nav" id="mainNav" style="display:none;">

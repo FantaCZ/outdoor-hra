@@ -75,9 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-<button class="nav-open-btn" id="navOpenBtn" aria-label="Otevřít menu" style="display:block;">
-    Otevřít menu
-</button>
 <?php include 'navbar.php'; ?>
 <br><br>
 <div class="register-wrapper" style="min-height:100vh;display:block;">
