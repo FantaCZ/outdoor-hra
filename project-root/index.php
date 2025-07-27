@@ -5,8 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hlavní stránka</title>
     <link rel="stylesheet" href="css/nav.css">
-    <link rel="stylesheet" href="css/style.css"> <!-- Ensure this link is correct -->
+    <link rel="stylesheet" href="css/style.css">
     <style>
+        body.index-page {
+            background-image: url('assets/1uzpp.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        .index-wrapper {
+            background: rgba(255,255,255,0.85);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        }
         /* Přidej styl pro fialové odkazy v index-wrapper */
         .index-wrapper a {
             color: #800080;

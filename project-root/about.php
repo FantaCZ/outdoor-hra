@@ -28,6 +28,26 @@
             width: 100%;
             margin-top: 10px;
         }
+        .about-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 60vh;
+        }
+        .about-section img {
+            margin-top: 20px;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(34,153,84,0.15);
+        }
+        body.about-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="about-page">

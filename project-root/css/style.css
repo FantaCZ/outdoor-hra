@@ -87,12 +87,12 @@ input#register-submit:hover {
 /* Styl pro hlavní obsah stránky */
 .index-content {
     text-align: center;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
 .index-content h1 {
     font-size: 2em;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .index-content p a {
