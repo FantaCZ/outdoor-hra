@@ -14,33 +14,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Hashování hesla pro bezpečnost
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // Hashování hesla pro bezpečnost (pro PHP 5.4 použijeme md5)
+    $hashed_password = md5($password);
+
+    // Ochrana proti SQL injection
+    $username_escaped = mysqli_real_escape_string($conn, $username);
 
     // Kontrola, zda uživatelské jméno již existuje
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
+    $sql = "SELECT id FROM users WHERE username = '$username_escaped'";
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        echo "Chyba dotazu: " . mysqli_error($conn);
+        exit;
+    }
+    if (mysqli_num_rows($result) > 0) {
         echo "Toto uživatelské jméno již existuje!";
         exit;
     }
 
     // Vložení nového uživatele do databáze
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $username, $hashed_password);
-
-    if ($stmt->execute()) {
+    $sql = "INSERT INTO users (username, password) VALUES ('$username_escaped', '$hashed_password')";
+    if (mysqli_query($conn, $sql)) {
         echo "Registrace byla úspěšná!";
     } else {
-        echo "Chyba při registraci: " . $stmt->error;
+        echo "Chyba při registraci: " . mysqli_error($conn);
     }
 
-    // Zavření příkazů a připojení k databázi
-    $stmt->close();
-    $conn->close();
+    // Zavření připojení k databázi
+    mysqli_close($conn);
 }
 ?>
 

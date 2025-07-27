@@ -1,10 +1,10 @@
 <?php
 session_start();
-// Database connection (adjust credentials as needed)
-$conn = new mysqli('localhost', 'root', '', 'escape_game');
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
+// Připojení k databázi
+include('db.php');
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit;
 }
 

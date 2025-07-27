@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Připojení k databázi
 include('db.php');
 
@@ -11,34 +12,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username) || empty($password)) {
         $error_message = "Uživatelské jméno a heslo jsou povinné!";
     } else {
-        // Příprava dotazu pro kontrolu uživatelského jména
-        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $stmt->store_result();
+        // Ochrana proti SQL injection
+        $username_escaped = mysqli_real_escape_string($conn, $username);
+        $password_hashed = md5($password);
 
+        // Dotaz na uživatele
+        $sql = "SELECT id, username, password FROM users WHERE username = '$username_escaped'";
+        $result = mysqli_query($conn, $sql);
 
-        // Pokud uživatel existuje, ověříme heslo
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($user_id, $db_username, $db_password);
-            $stmt->fetch();
-
+        if ($result && mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
             // Ověření hesla
-            if (password_verify($password, $db_password)) {
-                // Přihlášení úspěšné - nastavíme session a přesměrujeme
-                session_start();
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['username'] = $db_username;
-                header("Location: dashboard.php"); // Přesměrování na dashboard po přihlášení
-                exit;
+            if ($row['password'] === $password_hashed) {
+                // Přihlášení úspěšné - nastavíme session a zobrazíme hlášku
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+                $success_message = "Přihlášení úspěšné (" . htmlspecialchars($row['username']) . ")";
+                // Přesměrování po 2 sekundách
+                echo "<meta http-equiv='refresh' content='2;url=index.php'>";
             } else {
                 $error_message = "Nesprávné uživatelské jméno nebo heslo!";
             }
         } else {
             $error_message = "Uživatelské jméno neexistuje!";
         }
-
-        $stmt->close();
     }
 }
 ?>
@@ -84,6 +81,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($error_message)) {
             echo "<p class='error'>$error_message</p>";
         }
+        if (isset($success_message)) {
+            echo "<p class='success'>$success_message</p>";
+        }
         ?>
         <form action="login.php" method="POST" class="login-form">
             <label for="username">Uživatelské jméno:</label>
@@ -128,4 +128,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     window.addEventListener('resize', handleResize);
 </script>
 </body>
+</html>
 </html>
