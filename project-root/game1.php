@@ -54,15 +54,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 }
 
-// Fetch all questions with coordinates from the database
-$questions = [];
-$sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path 
-        FROM questions 
-        ORDER BY RAND() 
+$userId = $_SESSION['user_id'];
+$questions = getQuestionsForUser($conn, $userId);
+
+function getQuestionsForUser($conn, $userId) {
+    $userHasProgress = hasUserProgress($conn, $userId);
+    $questions = [];
+
+   if ($userHasProgress) {
+       // load user's questions
+       $sql = "
+            SELECT q.id, q.question_text, q.location_lat, q.location_lng, q.correct_answer, q.image_path
+            FROM users u
+            JOIN progress_questions pq ON u.progress_id = pq.progress_id
+            JOIN questions q ON pq.question_id = q.id
+            WHERE u.id = ? AND u.progress_id IS NOT NULL
+        ";
+
+       $stmt = $conn->prepare($sql);
+       $stmt->bind_param("i", $userId);
+       $stmt->execute();
+       $result = $stmt->get_result();
+
+       while ($row = $result->fetch_assoc()) {
+           $questions[] = $row;
+       }
+   } else {
+       // load random questions
+       $sql = "SELECT id, question_text, location_lat, location_lng, correct_answer, image_path
+        FROM questions
+        ORDER BY RAND()
         LIMIT 10";
-$result = $conn->query($sql);
-while ($row = $result->fetch_assoc()) {
-    $questions[] = $row;
+       $result = $conn->query($sql);
+       while ($row = $result->fetch_assoc()) {
+           $questions[] = $row;
+       }
+
+       // new progress row
+       $conn->query("INSERT INTO progress () VALUES ()");
+       $progressId = $conn->insert_id;
+
+       // insert into progress_questions
+       $insertStmt = $conn->prepare("
+            INSERT INTO progress_questions (progress_id, question_id) 
+            VALUES (?, ?)
+        ");
+
+       foreach ($questions as $row) {
+           $insertStmt->bind_param("ii", $progressId, $row['id']);
+           $insertStmt->execute();
+       }
+       $insertStmt->close();
+
+       // update user with this progress_id
+       $update = $conn->prepare("UPDATE users SET progress_id = ? WHERE id = ?");
+       $update->bind_param("ii", $progressId, $userId);
+       $update->execute();
+       $update->close();
+   }
+
+   return $questions;
+}
+
+function hasUserProgress($conn, $userId) {
+    $stmt = $conn->prepare("SELECT progress_id FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        if (is_null($row['progress_id'])) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        echo "<script>console.error('user not found: $userId');</script>";
+    }
 }
 
 // Pass all questions to JavaScript for proximity calculation
