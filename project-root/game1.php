@@ -24,38 +24,131 @@ $wrongAnswer = false;
 $questionRow = null;
 $currentCorrectAnswer = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $submittedAnswer = isset($_POST['answer']) ? trim($_POST['answer']) : '';
-    $questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
-    // Získat otázku a správnou odpověď podle ID
-    $stmt = $conn->prepare("SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions WHERE id = ?");
+$userId = $_SESSION['user_id'];
+$questions = getQuestionsForUser($conn, $userId);
+
+//if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//    $submittedAnswer = isset($_POST['answer']) ? trim($_POST['answer']) : '';
+//    $questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
+//    // Získat otázku a správnou odpověď podle ID
+//    $stmt = $conn->prepare("SELECT id, question_text, location_lat, location_lng, correct_answer, image_path FROM questions WHERE id = ?");
+//    $stmt->bind_param("i", $questionId);
+//    $stmt->execute();
+//    $stmt->bind_result($qid, $qtext, $qlat, $qlng, $correctAnswer, $imagePath);
+//    if ($stmt->fetch()) {
+//        $questionRow = [
+//            'id' => $qid,
+//            'question_text' => $qtext,
+//            'location_lat' => $qlat,
+//            'location_lng' => $qlng,
+//            'image_path' => $imagePath
+//        ];
+//        $currentCorrectAnswer = $correctAnswer;
+//        if (strcasecmp($submittedAnswer, $correctAnswer) !== 0) {
+//            $wrongAnswer = true;
+//            $showSuccess = false;
+//        } else {
+//            // Správná odpověď - přidej bod a přesměruj na novou otázku
+//            $_SESSION['correct_answers']++;
+//            header("Location: game1.php?success=1");
+//            exit;
+//        }
+//    }
+//    $stmt->close();
+//}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $answer = isset($_POST['answer']) ? $_POST['answer'] : '';
+    $questionId = isset($_POST['question_id']) ? $_POST['question_id'] : null;
+
+    // Validate inputs
+    if (!empty($answer) && !empty($questionId)) {
+        handleAnswer( $conn,$userId, $questionId, $answer);
+    } else {
+        echo "<script>console.error('no answer');</script>";
+    }
+}
+
+function handleAnswer( $conn,$userId, $questionId, $answer) {
+    echo "<script>console.log('$questionId');</script>";
+    echo "<script>console.log('$answer');</script>";
+
+    $stmt = $conn->prepare("SELECT correct_answer FROM questions WHERE id = ?");
     $stmt->bind_param("i", $questionId);
     $stmt->execute();
-    $stmt->bind_result($qid, $qtext, $qlat, $qlng, $correctAnswer, $imagePath);
-    if ($stmt->fetch()) {
-        $questionRow = [
-            'id' => $qid,
-            'question_text' => $qtext,
-            'location_lat' => $qlat,
-            'location_lng' => $qlng,
-            'image_path' => $imagePath
-        ];
-        $currentCorrectAnswer = $correctAnswer;
-        if (strcasecmp($submittedAnswer, $correctAnswer) !== 0) {
-            $wrongAnswer = true;
-            $showSuccess = false;
-        } else {
-            // Správná odpověď - přidej bod a přesměruj na novou otázku
-            $_SESSION['correct_answers']++;
-            header("Location: game1.php?success=1");
-            exit;
+    $result = $stmt->get_result();
+//    echo "<script>console.log('$result');</script>";
+
+    if ($row = $result->fetch_assoc()) {
+        $correctAnswer = $row['correct_answer'];
+
+        // Compare trimmed lowercase strings
+        if (trim(strtolower($answer)) === trim(strtolower($correctAnswer))) {
+            echo "<script>console.log('Correct');</script>";
+            $pid = getUserProgressId($conn, $userId);
+            markQuestionAsAnswered($conn, $pid, $questionId);
+
+            $progressFinished = areAllQuestionsAnswered($conn, $pid);
+            echo "<script>console.log(" . json_encode($progressFinished) . ");</script>";
+
+            if ($progressFinished) {
+                // TODO save time score to progress table
+            }
         }
+    } else {
+        echo "<script>console.log('Question not found');</script>";
     }
+
     $stmt->close();
 }
 
-$userId = $_SESSION['user_id'];
-$questions = getQuestionsForUser($conn, $userId);
+function getUserProgressId($conn, $userId) {
+    $stmt = $conn->prepare("SELECT progress_id FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row['progress_id']; // could be null if not set
+    }
+
+    return null; // user not found
+}
+
+function markQuestionAsAnswered($conn, $progressId, $questionId) {
+    $stmt = $conn->prepare("
+        UPDATE progress_questions 
+        SET answered = 1 
+        WHERE progress_id = ? AND question_id = ?
+    ");
+    $stmt->bind_param("ii", $progressId, $questionId);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo "<script>console.log('Marked as answered');</script>";
+    } else {
+        echo "<script>console.log('No matching row found');</script>";
+    }
+
+    $stmt->close();
+}
+
+function areAllQuestionsAnswered($conn, $progressId) {
+    $stmt = $conn->prepare("
+        SELECT COUNT(*) AS unanswered_count 
+        FROM progress_questions 
+        WHERE progress_id = ? AND answered = 0
+    ");
+    $stmt->bind_param("i", $progressId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row['unanswered_count'] == 0;
+    }
+
+    return false; // fallback if progress ID not found
+}
 
 function getQuestionsForUser($conn, $userId) {
     $userHasProgress = hasUserProgress($conn, $userId);
@@ -388,15 +481,15 @@ function hasUserProgress($conn, $userId) {
     });
 
     // Po odeslání odpovědi zkontroluj, zda je hra dokončena
-    document.querySelector('form').addEventListener('submit', function () {
-        const correctAnswers = <?php echo (int)$_SESSION['correct_answers']; ?>;
-        const totalQuestions = <?php echo (int)$totalQuestions; ?>;
-        if (correctAnswers + 1 >= totalQuestions) { // +1 protože odpověď se teprve zpracuje
-            stopTimer();
-            sendTimeToServer();
-            localStorage.removeItem('game_timer');
-        }
-    });
+    //document.querySelector('form').addEventListener('submit', function () {
+    //    const correctAnswers = <?php //echo (int)$_SESSION['correct_answers']; ?>//;
+    //    const totalQuestions = <?php //echo (int)$totalQuestions; ?>//;
+    //    if (correctAnswers + 1 >= totalQuestions) { // +1 protože odpověď se teprve zpracuje
+    //        stopTimer();
+    //        sendTimeToServer();
+    //        localStorage.removeItem('game_timer');
+    //    }
+    //});
 
     // --- Odeslání postupu do backendu ---
     function sendProgress(userId, username, answeredCorrectly, elapsedTime) {
