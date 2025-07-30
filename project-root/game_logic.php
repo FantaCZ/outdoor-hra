@@ -1,10 +1,7 @@
 <?php
 
-$mysqli = new mysqli("localhost", "root", "", "escape_game");
-if ($mysqli->connect_errno) {
-    http_response_code(500);
-    exit("Database connection failed.");
-}
+
+include('db.php');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['username'], $_POST['answered_correctly'], $_POST['completion_time'])) {

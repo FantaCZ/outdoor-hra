@@ -75,11 +75,11 @@
     <section class="rules-section">
         <h1>Pravidla hry</h1>
         <ul>
-            <li>Pravidlo 1: Hráči musí dodržovat všechny pokyny organizátorů.</li>
-            <li>Pravidlo 2: Hra je určena pro týmy o 2-5 hráčích.</li>
-            <li>Pravidlo 3: Hráči musí být starší 18 let.</li>
-            <li>Pravidlo 4: Používání mobilních telefonů je povoleno pouze pro navigaci.</li>
-            <li>Pravidlo 5: Hra končí, když tým dosáhne cíle nebo uplyne časový limit.</li>
+            <li>Pravidlo 1: Hráč musí odpovědět na všechny otázky (červené body na mapě).</li>
+            <li>Pravidlo 2: Není povoleno si hledat odpovědi na otázky na internetu.</li>
+            <li>Pravidlo 3: Nesmí se používat sekundární mapa (mapy.cz, google maps).</li>
+            <li>Pravidlo 4: Hra končí, když tým dosáhne cíle nebo uplyne časový limit.</li>
+            <li>Pravidlo 5: Hráč se musí bavit a musí to brát vážně. Je to přeci únikovka!!!</li>
         </ul>
     </section>
     <script>
